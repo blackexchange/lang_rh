@@ -133,9 +133,56 @@ if "original_cv_content" not in st.session_state:
 if "rewritten_cvs" not in st.session_state:
   st.session_state.rewritten_cvs = {}  # Dicionário para armazenar CVs reformulados por nome
 
+if "rewrite_options" not in st.session_state:
+  st.session_state.rewrite_options = {
+    "focus": "all",  # all, skills, experience, summary
+    "style": "professional",  # professional, modern, concise
+    "highlight_missing": True,
+    "emphasize_strengths": True
+  }
+
 # Salva descrição da vaga em um .csv
 save_job_to_csv(job, path_job_csv)
 job_details = load_job(path_job_csv)
+
+# ============================================
+# OPÇÕES DE REFORMULAÇÃO
+# ============================================
+st.sidebar.markdown("---")
+st.sidebar.subheader("⚙️ Opções de Reformulação")
+
+st.session_state.rewrite_options["focus"] = st.sidebar.selectbox(
+  "Foco da Reformulação",
+  ["all", "skills", "experience", "summary"],
+  index=0,
+  format_func=lambda x: {
+    "all": "Tudo",
+    "skills": "Habilidades",
+    "experience": "Experiência",
+    "summary": "Resumo"
+  }[x]
+)
+
+st.session_state.rewrite_options["style"] = st.sidebar.selectbox(
+  "Estilo",
+  ["professional", "modern", "concise"],
+  index=0,
+  format_func=lambda x: {
+    "professional": "Profissional",
+    "modern": "Moderno",
+    "concise": "Conciso"
+  }[x]
+)
+
+st.session_state.rewrite_options["highlight_missing"] = st.sidebar.checkbox(
+  "Destacar habilidades faltantes",
+  value=True
+)
+
+st.session_state.rewrite_options["emphasize_strengths"] = st.sidebar.checkbox(
+  "Enfatizar pontos fortes",
+  value=True
+)
 
 col1, col2 = st.columns(2)
 with col1:
@@ -281,12 +328,13 @@ if has_analysis and has_cv_content:
         elif not st.session_state.cv_analysis:
           st.error("❌ Análise não encontrada. Execute a análise detalhada primeiro.")
         else:
-          # Chama a função de reformulação
+          # Chama a função de reformulação com opções
           rewritten = rewrite_cv(
             llm,
             st.session_state.original_cv_content,
             st.session_state.cv_analysis,
-            job_details
+            job_details,
+            rewrite_options=st.session_state.rewrite_options
           )
           
           # Valida o resultado
@@ -400,12 +448,13 @@ if os.path.exists(json_file):
               # Gera análise a partir do JSON
               analysis = generate_analysis_from_json(cv_data)
               
-              # Executa a reformulação
+              # Executa a reformulação com opções
               rewritten = rewrite_cv(
                 llm,
                 cv_content,
                 analysis,
-                job_details
+                job_details,
+                rewrite_options=st.session_state.rewrite_options
               )
               
               if rewritten and isinstance(rewritten, str) and len(rewritten.strip()) > 50:

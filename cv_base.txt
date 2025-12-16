@@ -1,0 +1,61 @@
+DADOS PESSOAIS:
+- Nome: Rodney Neville
+- Email: joao@email.com
+- Telefone: (11) 99999-9999
+
+EXPERIÊNCIA PROFISSIONAL:
+
+- Desenvolvedor Sr .Net no CREA - Área de Conselho Estadual - (2023-present)
+- Arquiteto de Dados na Secretaria da Fazenda - Área Governamental (2022-2023)
+- Engenheiro de Dados na Gold Energy Portugal - Área de Energia Elétrica (2022-2024)
+- Arquiteto na Qualivida Saúde - Área Homecare (2020-2021)
+- Professor de Pós Graduação em Aplicações Web na Devry Wyden (2015-2016)
+- Desenvolvedor Tech Leader na Pixeon - Área de Saúde (2015-2020)
+- Desenvolvedor Sr na Medicware - Área de Saúde (2005-2015)
+
+
+FORMAÇÃO ACADÊMICA:
+- Especialização Big Data e Inteligência Artificial (2024) - Faculdade Líbano
+- Especialização Analista de Cyber Segurança (2020) - IGTI
+- MBA Em Gestão de Negócios (2011) - DeVry
+- Bacharelado em Sistemas de Informação (2005) - Universidade Estácio de Sá
+
+CERTIFICAÇÕES:
+- DF100: MongoDB Developer Fundamentals
+- DF200: MongoDB Optimizing Storage and Retrieval
+- DF300: MongoDB Design Skills and Advanced Features
+- DF400: MongoDB Production-Ready Development
+- OC700: MongoDB Operations Skills
+- OF400: MongoDB Atlas
+- Liquibase Certified
+- Azure Data Engineer DP-203,	Microsoft
+- Professional SCRUM Master,	SCRUM ORG
+- Professional SCRUM Developer,	SCRUM ORG
+- Six Sigma Green Belt,	Six Sigma Institute
+- Oracle Cloud (OCI),	Oracle
+- HTML CSS,	Microsoft
+- ITIL Foundation,	EXIN
+- BPM,	OCEB
+
+CURSOS:
+- 6 Sigma Green Belt	40h	UFBA
+- CEP Statistical Process Control	60h	UFBA
+- BPMN	20h	UFBA
+- IBM SPSS	20h	UFBA
+- Python Data Science	60h	Udemy
+- QlikView	30h	Udemy
+- Hadoop	40h	Udemy
+- PowerBI	100h	Data Science Academy
+- R	10h	Data Science Academy
+- Machine Learning Engineer	300h	Data Science Academy
+- IA Architect	150h	Data Science Academy
+- Cyber Security Analyst	148h	IGTI
+- Data Engineer	150h	Data Science Academy
+- LGPD	60h	Hotmart
+- Design Thinking UX/UI	30h	Udemy
+- HTML5 CSS3 Javascript	40h	Microsoft
+- ASP CORE.NET	40h	Microsoft
+- AZURE	40h	Microsoft
+- AWS Amazon Solution Architect	40h	Udemy
+- CAPM (Project Management)	40h	Alura
+- Analista de Georreferenciamento com Python e QGIS 120h ClickGEO

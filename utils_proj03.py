@@ -402,12 +402,15 @@ INSTRUÇÕES:
 2. Reorganize e reformule o conteúdo seguindo as recomendações da análise
 3. Destaque habilidades e experiências relevantes para a vaga
 4. Melhore a estrutura e clareza do texto
-5. Use linguagem profissional e objetiva
+5. Use linguagem {style}
 6. Mantenha o formato markdown do currículo original
 7. NÃO invente informações que não existem no currículo original
 8. Foque em destacar os pontos fortes identificados na análise
+9. {focus_instruction}
+10. {highlight_instruction}
+11. {strengths_instruction}
 
-CURRÍCULO ORIGINAL:
+CURRÍCULO ORIGINAL (a ser reformulado):
 '{original_cv}'
 
 ANÁLISE REALIZADA:
@@ -421,7 +424,7 @@ Retorne o currículo reformulado em formato markdown, mantendo a estrutura profi
 """)
 
 
-def rewrite_cv(llm, original_cv_content, analysis, job_details):
+def rewrite_cv(llm, original_cv_content, analysis, job_details, rewrite_options=None):
     """
     Agente Reformulador: Reformula o currículo baseado na análise
     
@@ -430,6 +433,7 @@ def rewrite_cv(llm, original_cv_content, analysis, job_details):
         original_cv_content: Conteúdo original do currículo
         analysis: Análise gerada pelo agente analisador (dict)
         job_details: Detalhes da vaga
+        rewrite_options: Dicionário com opções de reformulação (opcional)
     
     Returns:
         str: Currículo reformulado em markdown
@@ -441,6 +445,36 @@ def rewrite_cv(llm, original_cv_content, analysis, job_details):
         raise ValueError("Análise não pode estar vazia")
     if not job_details:
         raise ValueError("Detalhes da vaga não podem estar vazios")
+    
+    # Opções padrão
+    if rewrite_options is None:
+        rewrite_options = {
+            "focus": "all",
+            "style": "professional",
+            "highlight_missing": True,
+            "emphasize_strengths": True
+        }
+    
+    # Define instruções baseadas nas opções
+    focus_map = {
+        "all": "Foque em todos os aspectos do currículo",
+        "skills": "Dê ênfase especial às habilidades e competências técnicas",
+        "experience": "Dê ênfase especial à experiência profissional e histórico de trabalho",
+        "summary": "Dê ênfase especial ao resumo profissional e objetivo"
+    }
+    focus_instruction = focus_map.get(rewrite_options.get("focus", "all"), focus_map["all"])
+    
+    highlight_instruction = ""
+    if rewrite_options.get("highlight_missing", True):
+        highlight_instruction = "Destaque claramente as habilidades mencionadas na vaga que estão faltando no currículo, mas NÃO invente que o candidato as possui."
+    else:
+        highlight_instruction = "Não é necessário destacar habilidades faltantes."
+    
+    strengths_instruction = ""
+    if rewrite_options.get("emphasize_strengths", True):
+        strengths_instruction = "Enfatize e destaque os pontos fortes e alinhamentos identificados na análise."
+    else:
+        strengths_instruction = "Mantenha os pontos fortes sem ênfase especial."
     
     # Converte a análise para texto estruturado
     analysis_text = f"""
@@ -470,10 +504,21 @@ MELHORIAS PRIORITÁRIAS:
         prompt_template = create_rewrite_prompt_template()
         chain = prompt_template | llm
         
+        style_map = {
+            "professional": "profissional e objetiva",
+            "modern": "moderna e dinâmica",
+            "concise": "concisa e direta"
+        }
+        style_text = style_map.get(rewrite_options.get("style", "professional"), "profissional e objetiva")
+        
         output = chain.invoke({
             "original_cv": original_cv_content,
             "analysis": analysis_text,
-            "job": job_details
+            "job": job_details,
+            "style": style_text,
+            "focus_instruction": focus_instruction,
+            "highlight_instruction": highlight_instruction,
+            "strengths_instruction": strengths_instruction
         })
         
         rewritten_cv = format_res(output.content)
