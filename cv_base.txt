@@ -1,8 +1,10 @@
-**Dados**
-RODNEY NEVILLE
-asdas@gmail.com
-http://linkedin/asdasd
-(71) 9890-908098
+**RODNEY NEVILLE**
+
+✉︎ asdas@gmail.com
+
+[in] http://linkedin/asdasd
+
+✆ (71) 9890-908098
 
 
 **Resumo Profissional**  
@@ -40,6 +42,10 @@ Engenheiro de Dados Sênior com mais de 15 anos de experiência em arquitetura, 
 - Certificação Azure Data Engineer (2023)  
 - Certificação AWS Certified Data Analytics – Specialty (2022)  
 - Certificação Power BI e Tableau (2021)  
+
+
+**Cursos**
+- Curso de Power BI na Meta, 10h
 
 **Projetos e Consultorias Relevantes**  
 

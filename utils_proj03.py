@@ -6,6 +6,8 @@ import json
 import pandas as pd
 import csv
 import streamlit as st
+import re
+from io import BytesIO
 
 # Importa PyMuPDF (mais simples e confiável)
 try:
@@ -171,27 +173,28 @@ def generate_cv_content_from_json(cv_data):
     """
     content = f"""# {cv_data.get('name', 'Currículo')}
 
-## Resumo Profissional
-{cv_data.get('summary', '')}
+    ## Resumo Profissional
+    {cv_data.get('summary', '')}
 
-## Área de Atuação
-{cv_data.get('area', '')}
+    ## Hard Skills
+    {cv_data.get('hard_skills', '')}
 
-## Formação Acadêmica
-{cv_data.get('education', '')}
+    ## Soft Skills
+    {cv_data.get('soft_skills', '')}
 
-## Competências e Habilidades
-{', '.join(cv_data.get('skills', []))}
+    ## Formação Acadêmica
+    {cv_data.get('education', '')}
 
-## Pontos Fortes
-{chr(10).join(['- ' + s for s in cv_data.get('strengths', [])])}
+    ## Certificações
+    {cv_data.get('certifications', '')}
 
-## Áreas para Desenvolvimento
-{chr(10).join(['- ' + a for a in cv_data.get('areas_for_development', [])])}
+    ## Cursos
+    {cv_data.get('courses', '')}
 
-## Recomendações
-{cv_data.get('final_recommendations', '')}
-"""
+    ## Experiências
+    {cv_data.get('experiences', '')}
+   
+    """
     return content
 
 
@@ -306,48 +309,48 @@ def display_json_table(path_json):
 def create_analysis_prompt_template():
     """Cria o template de prompt para o agente analisador"""
     return ChatPromptTemplate.from_template("""
-Você é um especialista em Recursos Humanos com vasta experiência em análise de currículos.
-Sua tarefa é analisar profundamente o currículo e a vaga, gerando uma análise detalhada e estruturada.
+    Você é um especialista em Recursos Humanos com vasta experiência em análise de currículos.
+    Sua tarefa é analisar profundamente o currículo e a vaga, gerando uma análise detalhada e estruturada.
 
-INSTRUÇÕES:
-1. Analise o currículo fornecido em detalhes
-2. Compare com os requisitos e características da vaga
-3. Identifique pontos fortes, fracos, alinhamentos e desalinhamentos
-4. Gere recomendações específicas para melhorar o currículo
-5. Retorne APENAS um JSON válido com a estrutura abaixo
+    INSTRUÇÕES:
+    1. Analise o currículo fornecido em detalhes
+    2. Compare com os requisitos e características da vaga
+    3. Identifique pontos fortes, fracos, alinhamentos e desalinhamentos
+    4. Gere recomendações específicas para melhorar o currículo
+    5. Retorne APENAS um JSON válido com a estrutura abaixo
 
-SCHEMA DE RESPOSTA (JSON):
-{{
-  "analysis_summary": "Resumo executivo da análise (2-3 parágrafos)",
-  "alignment_score": 0.0,
-  "strengths": [
-    "Lista de pontos fortes e alinhamentos com a vaga"
-  ],
-  "weaknesses": [
-    "Lista de pontos fracos e desalinhamentos com a vaga"
-  ],
-  "missing_skills": [
-    "Habilidades mencionadas na vaga que não estão no currículo"
-  ],
-  "underutilized_skills": [
-    "Habilidades do candidato que poderiam ser melhor destacadas"
-  ],
-  "recommendations": [
-    "Recomendações específicas para melhorar o currículo"
-  ],
-  "key_improvements": [
-    "Melhorias prioritárias que devem ser feitas no currículo"
-  ]
-}}
+    SCHEMA DE RESPOSTA (JSON):
+    {{
+    "analysis_summary": "Resumo executivo da análise (2-3 parágrafos)",
+    "alignment_score": 0.0,
+    "strengths": [
+        "Lista de pontos fortes e alinhamentos com a vaga"
+    ],
+    "weaknesses": [
+        "Lista de pontos fracos e desalinhamentos com a vaga"
+    ],
+    "missing_skills": [
+        "Habilidades mencionadas na vaga que não estão no currículo"
+    ],
+    "underutilized_skills": [
+        "Habilidades do candidato que poderiam ser melhor destacadas"
+    ],
+    "recommendations": [
+        "Recomendações específicas para melhorar o currículo"
+    ],
+    "key_improvements": [
+        "Melhorias prioritárias que devem ser feitas no currículo"
+    ]
+    }}
 
-CURRÍCULO:
-'{cv}'
+    CURRÍCULO:
+    '{cv}'
 
-VAGA:
-'{job}'
+    VAGA:
+    '{job}'
 
-Retorne APENAS o JSON, sem explicações adicionais.
-""")
+    Retorne APENAS o JSON, sem explicações adicionais.
+    """)
 
 
 def analyze_cv_and_job(llm, cv_content, job_details):
@@ -394,46 +397,48 @@ def analyze_cv_and_job(llm, cv_content, job_details):
 def create_rewrite_prompt_template():
     """Cria o template de prompt para o agente reformulador"""
     return ChatPromptTemplate.from_template("""
-Você é um especialista em redação de currículos profissionais.
-Sua tarefa é criar um currículo reformulado usando o TEMPLATE fornecido como base estrutural, preenchendo as seções com informações baseadas na análise e no currículo original.
+    Você é um especialista em redação de currículos profissionais.
+    Sua tarefa é criar um currículo reformulado usando o TEMPLATE fornecido como base estrutural, preenchendo as seções com informações baseadas na análise e no currículo original.
 
-INSTRUÇÕES IMPORTANTES:
-1. Use o TEMPLATE fornecido como estrutura base - mantenha a mesma formatação, seções e estilo
-2. Preencha as seções do template com informações baseadas na análise e no currículo original
-3. Você PODE e DEVE criar/inventar conteúdo relevante para as seções, desde que seja coerente com:
-   - As habilidades e experiências do candidato
-   - Os pontos fortes identificados na análise
-   - Os requisitos da vaga
-   - As recomendações da análise
-4. Seções a preencher:
-   - **Resumo Profissional**: Crie um resumo que destaque os pontos fortes e alinhamento com a vaga
-   - **Experiências**: Crie descrições de experiências profissionais relevantes, destacando conquistas e habilidades
-   - **Projetos e Consultorias Relevantes**: Crie projetos que demonstrem as habilidades necessárias para a vaga
-   - **Hard Skills**: Liste habilidades técnicas relevantes, priorizando as mencionadas na vaga
-   - **Soft Skills**: Liste habilidades comportamentais relevantes
-5. Use linguagem {style}
-6. Mantenha a estrutura e formatação exata do template
-7. {focus_instruction}
-8. {highlight_instruction}
-9. {strengths_instruction}
-10. Seja criativo mas realista - crie conteúdo que faça sentido para o perfil do candidato
+    INSTRUÇÕES IMPORTANTES:
+    1. Use o TEMPLATE fornecido como estrutura base - mantenha a mesma formatação, seções e estilo
+    2. Preencha as seções do template com informações baseadas na análise e no currículo original
+    3. Você PODE e DEVE criar/inventar conteúdo relevante para as seções, desde que seja coerente com:
+    - As habilidades e experiências do candidato
+    - Os pontos fortes identificados na análise
+    - Os requisitos da vaga
+    - As recomendações da análise
+    4. Seções a preencher:
+    - **Resumo Profissional**: Crie um resumo que destaque os pontos fortes e alinhamento com a vaga
+    - **Experiências**: Mantenha o mesmo nome das empresas, porem, adeque o nome da posição ao da vaga, crie descrições de experiências profissionais relevantes, destacando conquistas e habilidades
+    - **Projetos e Consultorias Relevantes**: Crie projetos, com empresa e data fictícios que demonstrem as habilidades necessárias para a vaga
+    - **Hard Skills**: Liste habilidades técnicas relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
+    - **Soft Skills**: Liste habilidades comportamentais relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
+    - **Certificações**: Liste certificações relevantes, priorizando as mencionadas na vaga
+    - **Cursos**: Liste cursos relevantes, priorizando os mencionados na vaga
+    5. Use linguagem {style}
+    6. Mantenha a estrutura e formatação exata do template
+    7. {focus_instruction}
+    8. {highlight_instruction}
+    9. {strengths_instruction}
+    10. Seja criativo mas realista - crie conteúdo que faça sentido para o perfil do candidato
 
-TEMPLATE DE CV (use esta estrutura):
-'{cv_template}'
+    TEMPLATE DE CV (use esta estrutura):
+    '{cv_template}'
 
-CURRÍCULO ORIGINAL (referência de informações):
-'{original_cv}'
+    CURRÍCULO ORIGINAL (referência de informações):
+    '{original_cv}'
 
-ANÁLISE REALIZADA:
-'{analysis}'
+    ANÁLISE REALIZADA:
+    '{analysis}'
 
-VAGA DE REFERÊNCIA:
-'{job}'
+    VAGA DE REFERÊNCIA:
+    '{job}'
 
-Crie um currículo completo preenchendo o template com informações relevantes baseadas na análise e no currículo original.
-Mantenha a estrutura exata do template, apenas preenchendo as seções com conteúdo novo e relevante.
-Retorne o currículo completo no mesmo formato do template.
-""")
+    Crie um currículo completo preenchendo o template com informações relevantes baseadas na análise e no currículo original.
+    Mantenha a estrutura exata do template, apenas preenchendo as seções com conteúdo novo e relevante.
+    Retorne o currículo completo no mesmo formato do template.
+    """)
 
 
 def rewrite_cv(llm, original_cv_content, analysis, job_details, cv_template=None, rewrite_options=None):
@@ -494,27 +499,27 @@ def rewrite_cv(llm, original_cv_content, analysis, job_details, cv_template=None
     
     # Converte a análise para texto estruturado
     analysis_text = f"""
-RESUMO DA ANÁLISE:
-{analysis.get('analysis_summary', 'N/A')}
+    RESUMO DA ANÁLISE:
+    {analysis.get('analysis_summary', 'N/A')}
 
-PONTOS FORTES:
-{chr(10).join(['- ' + str(s) for s in analysis.get('strengths', [])])}
+    PONTOS FORTES:
+    {chr(10).join(['- ' + str(s) for s in analysis.get('strengths', [])])}
 
-PONTOS FRACOS:
-{chr(10).join(['- ' + str(w) for w in analysis.get('weaknesses', [])])}
+    PONTOS FRACOS:
+    {chr(10).join(['- ' + str(w) for w in analysis.get('weaknesses', [])])}
 
-HABILIDADES FALTANTES:
-{chr(10).join(['- ' + str(s) for s in analysis.get('missing_skills', [])])}
+    HABILIDADES FALTANTES:
+    {chr(10).join(['- ' + str(s) for s in analysis.get('missing_skills', [])])}
 
-HABILIDADES SUBUTILIZADAS:
-{chr(10).join(['- ' + str(s) for s in analysis.get('underutilized_skills', [])])}
+    HABILIDADES SUBUTILIZADAS:
+    {chr(10).join(['- ' + str(s) for s in analysis.get('underutilized_skills', [])])}
 
-RECOMENDAÇÕES:
-{chr(10).join(['- ' + str(r) for r in analysis.get('recommendations', [])])}
+    RECOMENDAÇÕES:
+    {chr(10).join(['- ' + str(r) for r in analysis.get('recommendations', [])])}
 
-MELHORIAS PRIORITÁRIAS:
-{chr(10).join(['- ' + str(k) for k in analysis.get('key_improvements', [])])}
-"""
+    MELHORIAS PRIORITÁRIAS:
+    {chr(10).join(['- ' + str(k) for k in analysis.get('key_improvements', [])])}
+    """
     
     try:
         prompt_template = create_rewrite_prompt_template()
@@ -562,3 +567,214 @@ def save_rewritten_cv(content, filename):
     with open(filename, "w", encoding="utf-8") as f:
         f.write(content)
     return filename
+
+
+def convert_markdown_to_text(markdown_text):
+    """
+    Converte markdown básico para texto simples para PDF.
+    Remove formatação markdown e mantém estrutura.
+    """
+    # Remove markdown bold (**texto**)
+    text = re.sub(r'\*\*(.+?)\*\*', r'\1', markdown_text)
+    # Remove markdown italic (*texto*)
+    text = re.sub(r'\*(.+?)\*', r'\1', text)
+    # Remove markdown headers (# ## ###)
+    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
+    # Remove markdown links [text](url)
+    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+    # Remove markdown horizontal rules (---)
+    text = re.sub(r'^---+$', '', text, flags=re.MULTILINE)
+    
+    return text
+
+
+def generate_pdf_from_cv(cv_content, filename=None):
+    """
+    Gera um PDF a partir do conteúdo do currículo.
+    
+    Args:
+        cv_content: Conteúdo do currículo em markdown/texto
+        filename: Nome do arquivo (opcional)
+    
+    Returns:
+        bytes: Conteúdo do PDF em bytes
+    """
+    try:
+        from reportlab.lib.pagesizes import letter, A4
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+        from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_JUSTIFY
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        
+        # Cria buffer em memória
+        buffer = BytesIO()
+        
+        # Cria documento PDF
+        doc = SimpleDocTemplate(buffer, pagesize=A4,
+                              rightMargin=72, leftMargin=72,
+                              topMargin=72, bottomMargin=18)
+        
+        # Estilos
+        styles = getSampleStyleSheet()
+        
+        # Estilo para título
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=16,
+            textColor='#1a1a1a',
+            spaceAfter=12,
+            alignment=TA_LEFT,
+            fontName='Helvetica-Bold'
+        )
+        
+        # Estilo para subtítulo
+        subtitle_style = ParagraphStyle(
+            'CustomSubtitle',
+            parent=styles['Heading2'],
+            fontSize=14,
+            textColor='#2c3e50',
+            spaceAfter=8,
+            spaceBefore=12,
+            alignment=TA_LEFT,
+            fontName='Helvetica-Bold'
+        )
+        
+        # Estilo para texto normal
+        normal_style = ParagraphStyle(
+            'CustomNormal',
+            parent=styles['Normal'],
+            fontSize=10,
+            textColor='#333333',
+            spaceAfter=6,
+            alignment=TA_LEFT,
+            leading=14
+        )
+        
+        # Estilo para itálico (experiências)
+        italic_style = ParagraphStyle(
+            'CustomItalic',
+            parent=styles['Normal'],
+            fontSize=9,
+            textColor='#555555',
+            spaceAfter=4,
+            alignment=TA_LEFT,
+            leading=12,
+            fontName='Helvetica-Oblique'
+        )
+        
+        # Processa o conteúdo mantendo a estrutura
+        lines = cv_content.split('\n')
+        
+        story = []
+        in_section = False
+        
+        for i, line in enumerate(lines):
+            original_line = line
+            line = line.strip()
+            
+            if not line:
+                if not in_section:
+                    story.append(Spacer(1, 6))
+                continue
+            
+            # Detecta seções principais (começam com ** e terminam com **)
+            if line.startswith('**') and line.endswith('**') and not line.startswith('- **'):
+                # Remove ** e adiciona como subtítulo
+                section_title = line.replace('**', '').strip()
+                story.append(Spacer(1, 12))
+                story.append(Paragraph(section_title, subtitle_style))
+                story.append(Spacer(1, 6))
+                in_section = True
+                continue
+            
+            # Detecta separadores (---)
+            if line.startswith('---'):
+                story.append(Spacer(1, 8))
+                continue
+            
+            # Detecta títulos de experiência (começam com - **)
+            if line.startswith('- **'):
+                # Remove - ** e ** do final
+                exp_title = line.replace('- **', '').replace('**', '').strip()
+                story.append(Spacer(1, 8))
+                story.append(Paragraph(exp_title, subtitle_style))
+                story.append(Spacer(1, 4))
+                continue
+            
+            # Detecta itálico (começam com - * mas não terminam com *)
+            if line.startswith('- *') and not line.endswith('*'):
+                # Remove - * do início
+                italic_text = line.replace('- *', '', 1).strip()
+                # Remove * do final se existir
+                if italic_text.endswith('*'):
+                    italic_text = italic_text[:-1].strip()
+                story.append(Paragraph(italic_text, italic_style))
+                story.append(Spacer(1, 4))
+                continue
+            
+            # Detecta itálico completo (começam e terminam com *)
+            if line.startswith('- *') and line.endswith('*') and line.count('*') >= 2:
+                italic_text = line.replace('- *', '').replace('*', '').strip()
+                story.append(Paragraph(italic_text, italic_style))
+                story.append(Spacer(1, 4))
+                continue
+            
+            # Detecta listas simples (começam com -)
+            if line.startswith('- '):
+                list_item = line.replace('- ', '', 1).strip()
+                # Remove formatação markdown restante
+                list_item = re.sub(r'\*\*(.+?)\*\*', r'\1', list_item)
+                list_item = re.sub(r'\*(.+?)\*', r'\1', list_item)
+                story.append(Paragraph(f"• {list_item}", normal_style))
+                story.append(Spacer(1, 4))
+                continue
+            
+            # Texto normal - processa markdown e escapa para HTML/XML
+            text_line = line
+            # Processa markdown: **texto** vira <b>texto</b>
+            text_line = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text_line)
+            # Processa markdown: *texto* vira <i>texto</i> (mas não se já está em negrito)
+            text_line = re.sub(r'(?<!<b>)\*([^*]+?)\*(?!</b>)', r'<i>\1</i>', text_line)
+            
+            # Escapa caracteres especiais para XML/HTML
+            # Primeiro, protege as tags HTML que criamos
+            text_line = text_line.replace('<b>', '___BOLD_START___')
+            text_line = text_line.replace('</b>', '___BOLD_END___')
+            text_line = text_line.replace('<i>', '___ITALIC_START___')
+            text_line = text_line.replace('</i>', '___ITALIC_END___')
+            
+            # Escapa caracteres especiais
+            text_line = text_line.replace('&', '&amp;')
+            text_line = text_line.replace('<', '&lt;')
+            text_line = text_line.replace('>', '&gt;')
+            
+            # Restaura as tags HTML
+            text_line = text_line.replace('___BOLD_START___', '<b>')
+            text_line = text_line.replace('___BOLD_END___', '</b>')
+            text_line = text_line.replace('___ITALIC_START___', '<i>')
+            text_line = text_line.replace('___ITALIC_END___', '</i>')
+            
+            if text_line.strip():
+                story.append(Paragraph(text_line, normal_style))
+                story.append(Spacer(1, 4))
+        
+        # Gera PDF
+        doc.build(story)
+        
+        # Retorna bytes
+        buffer.seek(0)
+        pdf_bytes = buffer.getvalue()
+        buffer.close()
+        
+        return pdf_bytes
+        
+    except ImportError:
+        # Se reportlab não estiver instalado, retorna None
+        st.error("Biblioteca reportlab não instalada. Execute: pip install reportlab")
+        return None
+    except Exception as e:
+        st.error(f"Erro ao gerar PDF: {e}")
+        return None

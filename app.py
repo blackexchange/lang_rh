@@ -51,10 +51,13 @@ Sustentação e manutenção de softwares de ERP e HCM, incluindo customizaçõe
 schema = """
 {
   "name": "Nome completo do candidato",
+
   "area": "Área ou setor principal que o candidato atua. Classifique em apenas uma: Desenvolvimento, Marketing, Vendas, Financeiro, Administrativo, Outros",
   "summary": "Resumo objetivo sobre o perfil profissional do candidato",
-  "skills": ["competência 1", "competência 2", "..."],
+  "hard_skills": ["competência 1", "competência 2", "..."],
+  "soft_skills": ["competência 1", "competência 2", "..."],
   "education": "Resumo da formação acadêmica mais relevante",
+  "certifications": ["certificação 1", "certificação 2", "..."],
   "interview_questions": ["Pelo menos 3 perguntas úteis para entrevista com base no currículo, para esclarecer algum ponto ou explorar melhor"],
   "strengths": ["Pontos fortes e aspectos que indicam alinhamento com o perfil ou vaga desejada"],
   "areas_for_development": ["Pontos que indicam possíveis lacunas, fragilidades ou necessidades de desenvolvimento"],
@@ -68,8 +71,10 @@ fields = [
     "name",
     "area",
     "summary",
-    "skills",
+    "hard_skills",
+    "soft_skills",
     "education",
+    "certifications",
     "interview_questions",
     "strengths",
     "areas_for_development",
@@ -85,10 +90,11 @@ Seja justo e rigoroso ao atribuir as notas. A nota 10.0 só deve ser atribuída 
 
 Critérios de avaliação:
 1. Experiência (Peso: 35% do total): Análise de posições anteriores, tempo de atuação e similaridade com as responsabilidades da vaga.
-2. Habilidades Técnicas (Peso: 25% do total): Verifique o alinhamento das habilidades técnicas com os requisitos mencionados na vaga.
-3. Educação (Peso: 15% do total): Avalie a relevância da graduação/certificações para o cargo, incluindo instituições e anos de estudo.
-4. Pontos Fortes (Peso: 15% do total): Avalie a relevância dos pontos fortes (ou alinhamentos) para a vaga.
-5. Pontos Fracos (Desconto de até 10%): Avalie a gravidade dos pontos fracos (ou desalinhamentos) para a vaga.
+2. Habilidades Técnicas (Peso: 20% do total): Verifique o alinhamento das habilidades técnicas com os requisitos mencionados na vaga.
+3. Soft Skills (Peso: 5% do total): Verifique o alinhamento das soft skills com os requisitos mencionados na vaga.
+4. Educação (Peso: 15% do total): Avalie a relevância da graduação/certificações para o cargo, incluindo instituições e anos de estudo.
+5. Pontos Fortes (Peso: 15% do total): Avalie a relevância dos pontos fortes (ou alinhamentos) para a vaga.
+6. Pontos Fracos (Desconto de até 10%): Avalie a gravidade dos pontos fracos (ou desalinhamentos) para a vaga.
 """
 
 prompt_template = ChatPromptTemplate.from_template("""
@@ -445,14 +451,31 @@ if has_analysis and has_cv_content:
       with st.expander("Ver currículo reformulado", expanded=True):
         st.markdown(st.session_state.rewritten_cv)
     
-    # Download do currículo reformulado
-    st.download_button(
-      label="📥 Baixar Currículo Reformulado (.md)",
-      data=st.session_state.rewritten_cv,
-      file_name="curriculo_reformulado.md",
-      mime="text/markdown",
-      key="download_rewritten_cv"
-    )
+    # Downloads do currículo reformulado
+    col_download_md_main, col_download_pdf_main = st.columns(2)
+    
+    with col_download_md_main:
+      st.download_button(
+        label="📄 Baixar Markdown (.md)",
+        data=st.session_state.rewritten_cv,
+        file_name="curriculo_reformulado.md",
+        mime="text/markdown",
+        key="download_rewritten_cv_md",
+        use_container_width=True
+      )
+    
+    with col_download_pdf_main:
+      # Gera PDF
+      pdf_bytes = generate_pdf_from_cv(st.session_state.rewritten_cv)
+      if pdf_bytes:
+        st.download_button(
+          label="📕 Baixar PDF (.pdf)",
+          data=pdf_bytes,
+          file_name="curriculo_reformulado.pdf",
+          mime="application/pdf",
+          key="download_rewritten_cv_pdf",
+          use_container_width=True
+        )
 elif st.session_state.cv_analysis and not st.session_state.original_cv_content:
   st.info("💡 Faça upload de um currículo e execute a análise para poder reformular.")
 elif not st.session_state.cv_analysis and st.session_state.original_cv_content:
@@ -491,7 +514,7 @@ if os.path.exists(json_file):
       
       with cols[4]:
         # Botão de reformulação para este currículo específico
-        if st.button("🔄 Reformular", key=f"btn_rewrite_{i}", type="primary", use_container_width=True):
+        if st.button("🔄 Reformular CV", key=f"btn_rewrite_{i}", type="primary", use_container_width=True):
           with st.spinner(f"Reformulando currículo de {candidate_name}..."):
             try:
               # Gera conteúdo do CV a partir do JSON
@@ -534,16 +557,30 @@ if os.path.exists(json_file):
               st.error(f"❌ Erro ao reformular currículo: {e}")
       
       with cols[5]:
-        # Mostra botão de download se o CV foi reformulado
+        # Mostra botões de download se o CV foi reformulado
         if candidate_name in st.session_state.rewritten_cvs:
-          st.download_button(
-            label="📥",
-            data=st.session_state.rewritten_cvs[candidate_name],
-            file_name=f"curriculo_reformulado_{candidate_name.replace(' ', '_')}.md",
-            mime="text/markdown",
-            key=f"download_{i}",
-            use_container_width=True
-          )
+          col_md, col_pdf = st.columns(2)
+          with col_md:
+            st.download_button(
+              label="📄 MD",
+              data=st.session_state.rewritten_cvs[candidate_name],
+              file_name=f"curriculo_reformulado_{candidate_name.replace(' ', '_')}.md",
+              mime="text/markdown",
+              key=f"download_md_{i}",
+              use_container_width=True
+            )
+          with col_pdf:
+            # Gera PDF
+            pdf_bytes = generate_pdf_from_cv(st.session_state.rewritten_cvs[candidate_name])
+            if pdf_bytes:
+              st.download_button(
+                label="📕 PDF",
+                data=pdf_bytes,
+                file_name=f"curriculo_reformulado_{candidate_name.replace(' ', '_')}.pdf",
+                mime="application/pdf",
+                key=f"download_pdf_{i}",
+                use_container_width=True
+              )
       
       st.divider()
 
@@ -575,14 +612,31 @@ if st.session_state.selected_cv:
       with st.expander("Ver currículo reformulado", expanded=True):
         st.markdown(st.session_state.rewritten_cvs[selected_name])
     
-    # Download
-    st.download_button(
-      label=f"📥 Baixar Currículo Reformulado de {selected_name}",
-      data=st.session_state.rewritten_cvs[selected_name],
-      file_name=f"curriculo_reformulado_{selected_name.replace(' ', '_')}.md",
-      mime="text/markdown",
-      key="download_selected_rewritten"
-    )
+    # Downloads
+    col_download_md, col_download_pdf = st.columns(2)
+    
+    with col_download_md:
+      st.download_button(
+        label=f"📄 Baixar Markdown (.md)",
+        data=st.session_state.rewritten_cvs[selected_name],
+        file_name=f"curriculo_reformulado_{selected_name.replace(' ', '_')}.md",
+        mime="text/markdown",
+        key="download_selected_rewritten_md",
+        use_container_width=True
+      )
+    
+    with col_download_pdf:
+      # Gera PDF
+      pdf_bytes = generate_pdf_from_cv(st.session_state.rewritten_cvs[selected_name])
+      if pdf_bytes:
+        st.download_button(
+          label=f"📕 Baixar PDF (.pdf)",
+          data=pdf_bytes,
+          file_name=f"curriculo_reformulado_{selected_name.replace(' ', '_')}.pdf",
+          mime="application/pdf",
+          key="download_selected_rewritten_pdf",
+          use_container_width=True
+        )
 
 if os.path.exists(json_file):
   with open(json_file, "r", encoding="utf-8") as f:
