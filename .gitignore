@@ -1,0 +1,46 @@
+# Ambiente Virtual
+venv/
+env/
+ENV/
+.venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Streamlit
+.streamlit/
+
+# Arquivos de dados
+*.json
+*.csv
+*.pdf
+*.md
+!requirements.txt
+!README.md
+
+# Cache do Hugging Face
+.hf_cache/
+.huggingface/
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
