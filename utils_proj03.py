@@ -395,22 +395,33 @@ def create_rewrite_prompt_template():
     """Cria o template de prompt para o agente reformulador"""
     return ChatPromptTemplate.from_template("""
 Você é um especialista em redação de currículos profissionais.
-Sua tarefa é reformular o currículo fornecido, aplicando as recomendações da análise para melhorar o alinhamento com a vaga.
+Sua tarefa é criar um currículo reformulado usando o TEMPLATE fornecido como base estrutural, preenchendo as seções com informações baseadas na análise e no currículo original.
 
-INSTRUÇÕES:
-1. Mantenha TODAS as informações verdadeiras do currículo original
-2. Reorganize e reformule o conteúdo seguindo as recomendações da análise
-3. Destaque habilidades e experiências relevantes para a vaga
-4. Melhore a estrutura e clareza do texto
+INSTRUÇÕES IMPORTANTES:
+1. Use o TEMPLATE fornecido como estrutura base - mantenha a mesma formatação, seções e estilo
+2. Preencha as seções do template com informações baseadas na análise e no currículo original
+3. Você PODE e DEVE criar/inventar conteúdo relevante para as seções, desde que seja coerente com:
+   - As habilidades e experiências do candidato
+   - Os pontos fortes identificados na análise
+   - Os requisitos da vaga
+   - As recomendações da análise
+4. Seções a preencher:
+   - **Resumo Profissional**: Crie um resumo que destaque os pontos fortes e alinhamento com a vaga
+   - **Experiências**: Crie descrições de experiências profissionais relevantes, destacando conquistas e habilidades
+   - **Projetos e Consultorias Relevantes**: Crie projetos que demonstrem as habilidades necessárias para a vaga
+   - **Hard Skills**: Liste habilidades técnicas relevantes, priorizando as mencionadas na vaga
+   - **Soft Skills**: Liste habilidades comportamentais relevantes
 5. Use linguagem {style}
-6. Mantenha o formato markdown do currículo original
-7. NÃO invente informações que não existem no currículo original
-8. Foque em destacar os pontos fortes identificados na análise
-9. {focus_instruction}
-10. {highlight_instruction}
-11. {strengths_instruction}
+6. Mantenha a estrutura e formatação exata do template
+7. {focus_instruction}
+8. {highlight_instruction}
+9. {strengths_instruction}
+10. Seja criativo mas realista - crie conteúdo que faça sentido para o perfil do candidato
 
-CURRÍCULO ORIGINAL (a ser reformulado):
+TEMPLATE DE CV (use esta estrutura):
+'{cv_template}'
+
+CURRÍCULO ORIGINAL (referência de informações):
 '{original_cv}'
 
 ANÁLISE REALIZADA:
@@ -419,20 +430,22 @@ ANÁLISE REALIZADA:
 VAGA DE REFERÊNCIA:
 '{job}'
 
-Reformule o currículo aplicando as melhorias sugeridas na análise.
-Retorne o currículo reformulado em formato markdown, mantendo a estrutura profissional.
+Crie um currículo completo preenchendo o template com informações relevantes baseadas na análise e no currículo original.
+Mantenha a estrutura exata do template, apenas preenchendo as seções com conteúdo novo e relevante.
+Retorne o currículo completo no mesmo formato do template.
 """)
 
 
-def rewrite_cv(llm, original_cv_content, analysis, job_details, rewrite_options=None):
+def rewrite_cv(llm, original_cv_content, analysis, job_details, cv_template=None, rewrite_options=None):
     """
-    Agente Reformulador: Reformula o currículo baseado na análise
+    Agente Reformulador: Reformula o currículo baseado na análise usando um template
     
     Args:
         llm: Modelo de linguagem
         original_cv_content: Conteúdo original do currículo
         analysis: Análise gerada pelo agente analisador (dict)
         job_details: Detalhes da vaga
+        cv_template: Template de CV para usar como estrutura base (opcional)
         rewrite_options: Dicionário com opções de reformulação (opcional)
     
     Returns:
@@ -445,6 +458,8 @@ def rewrite_cv(llm, original_cv_content, analysis, job_details, rewrite_options=
         raise ValueError("Análise não pode estar vazia")
     if not job_details:
         raise ValueError("Detalhes da vaga não podem estar vazios")
+    if not cv_template:
+        raise ValueError("Template de CV é obrigatório")
     
     # Opções padrão
     if rewrite_options is None:
@@ -452,7 +467,8 @@ def rewrite_cv(llm, original_cv_content, analysis, job_details, rewrite_options=
             "focus": "all",
             "style": "professional",
             "highlight_missing": True,
-            "emphasize_strengths": True
+            "emphasize_strengths": True,
+            "template": "1"
         }
     
     # Define instruções baseadas nas opções
@@ -512,6 +528,7 @@ MELHORIAS PRIORITÁRIAS:
         style_text = style_map.get(rewrite_options.get("style", "professional"), "profissional e objetiva")
         
         output = chain.invoke({
+            "cv_template": cv_template,
             "original_cv": original_cv_content,
             "analysis": analysis_text,
             "job": job_details,

@@ -138,7 +138,14 @@ if "rewrite_options" not in st.session_state:
     "focus": "all",  # all, skills, experience, summary
     "style": "professional",  # professional, modern, concise
     "highlight_missing": True,
-    "emphasize_strengths": True
+    "emphasize_strengths": True,
+    "template": "1"  # 1 ou 2
+  }
+
+if "cv_templates" not in st.session_state:
+  st.session_state.cv_templates = {
+    "1": None,  # cv_base.txt
+    "2": None   # cv_base2.txt
   }
 
 # Salva descrição da vaga em um .csv
@@ -146,10 +153,47 @@ save_job_to_csv(job, path_job_csv)
 job_details = load_job(path_job_csv)
 
 # ============================================
+# CARREGAR TEMPLATES DE CV
+# ============================================
+# Carrega os templates se ainda não foram carregados
+if st.session_state.cv_templates["1"] is None:
+  try:
+    if os.path.exists("cv_base.txt"):
+      with open("cv_base.txt", "r", encoding="utf-8") as f:
+        st.session_state.cv_templates["1"] = f.read()
+  except Exception as e:
+    st.sidebar.error(f"Erro ao carregar cv_base.txt: {e}")
+
+if st.session_state.cv_templates["2"] is None:
+  try:
+    if os.path.exists("cv_base2.txt"):
+      with open("cv_base2.txt", "r", encoding="utf-8") as f:
+        st.session_state.cv_templates["2"] = f.read()
+  except Exception as e:
+    st.sidebar.error(f"Erro ao carregar cv_base2.txt: {e}")
+
+# ============================================
 # OPÇÕES DE REFORMULAÇÃO
 # ============================================
 st.sidebar.markdown("---")
 st.sidebar.subheader("⚙️ Opções de Reformulação")
+
+# Seleção do template
+st.session_state.rewrite_options["template"] = st.sidebar.selectbox(
+  "Template de CV",
+  ["1", "2"],
+  index=0,
+  format_func=lambda x: f"Template {x} (cv_base{x}.txt)"
+)
+
+# Mostra status do template
+selected_template = st.session_state.rewrite_options["template"]
+if st.session_state.cv_templates[selected_template]:
+  st.sidebar.success(f"✅ Template {selected_template} carregado")
+  with st.sidebar.expander("👁️ Visualizar Template"):
+    st.text(st.session_state.cv_templates[selected_template][:300] + "...")
+else:
+  st.sidebar.warning(f"⚠️ Template {selected_template} não encontrado")
 
 st.session_state.rewrite_options["focus"] = st.sidebar.selectbox(
   "Foco da Reformulação",
@@ -328,14 +372,22 @@ if has_analysis and has_cv_content:
         elif not st.session_state.cv_analysis:
           st.error("❌ Análise não encontrada. Execute a análise detalhada primeiro.")
         else:
-          # Chama a função de reformulação com opções
-          rewritten = rewrite_cv(
-            llm,
-            st.session_state.original_cv_content,
-            st.session_state.cv_analysis,
-            job_details,
-            rewrite_options=st.session_state.rewrite_options
-          )
+          # Chama a função de reformulação com opções e template
+          selected_template = st.session_state.rewrite_options["template"]
+          cv_template = st.session_state.cv_templates.get(selected_template)
+          
+          if not cv_template:
+            st.error(f"❌ Template {selected_template} não encontrado. Verifique se o arquivo cv_base{selected_template}.txt existe.")
+            rewritten = None
+          else:
+            rewritten = rewrite_cv(
+              llm,
+              st.session_state.original_cv_content,
+              st.session_state.cv_analysis,
+              job_details,
+              cv_template=cv_template,
+              rewrite_options=st.session_state.rewrite_options
+            )
           
           # Valida o resultado
           if rewritten and isinstance(rewritten, str) and len(rewritten.strip()) > 50:
@@ -448,14 +500,22 @@ if os.path.exists(json_file):
               # Gera análise a partir do JSON
               analysis = generate_analysis_from_json(cv_data)
               
-              # Executa a reformulação com opções
-              rewritten = rewrite_cv(
-                llm,
-                cv_content,
-                analysis,
-                job_details,
-                rewrite_options=st.session_state.rewrite_options
-              )
+              # Executa a reformulação com opções e template
+              selected_template = st.session_state.rewrite_options["template"]
+              cv_template = st.session_state.cv_templates.get(selected_template)
+              
+              if not cv_template:
+                st.error(f"❌ Template {selected_template} não encontrado. Verifique se o arquivo cv_base{selected_template}.txt existe.")
+                rewritten = None
+              else:
+                rewritten = rewrite_cv(
+                  llm,
+                  cv_content,
+                  analysis,
+                  job_details,
+                  cv_template=cv_template,
+                  rewrite_options=st.session_state.rewrite_options
+                )
               
               if rewritten and isinstance(rewritten, str) and len(rewritten.strip()) > 50:
                 # Salva no dicionário de CVs reformulados
