@@ -397,15 +397,13 @@ def analyze_cv_and_job(llm, cv_content, job_details):
 def create_rewrite_prompt_template():
     """Cria o template de prompt para o agente reformulador"""
     return ChatPromptTemplate.from_template("""
-    Você é um especialista em redação de currículos profissionais.
-    Atue como um Headhunter Especialista em Tecnologia e Otimização de Currículos para ATS. Você é expert em adequar perfis seniores (Arquitetos, Tech Leads, Engenheiros de Dados, Especialistas em IA Generativa) para vagas competitivas.
-
-    Sua tarefa é Reescrever pontos estratégicos do currículo abaixo usando o TEMPLATE fornecido como base estrutural, para maximizar a aderência (match) com a descrição da vaga fornecida, baseadas na *análise* e no currículo original.. Pode inventar dados, alterar a semântica e a ênfase para espelhar a linguagem da empresa.
+    Atue como um Especialista em Recrutamento e Seleção com 15 anos de experiência em recolocação profissional. Sua tarefa é reescrever o  e Otimização de Currículos para ATS. Você é expert em adequar perfis seniores (Arquitetos, Tech Leads, Engenheiros de Dados, Especialistas em IA Generativa) para vagas competitivas.
+    Você irá reescrever pontos estratégicos do currículo abaixo usando o TEMPLATE fornecido como base estrutural, para maximizar a aderência (match) com a descrição da vaga fornecida, baseadas na *análise* e no currículo original.. Pode inventar dados, alterar a semântica e a ênfase para espelhar a linguagem da empresa.
 
 
     INSTRUÇÕES IMPORTANTES:
     1. Use o TEMPLATE fornecido como estrutura base - mantenha a mesma formatação, seções e estilo
-    2. Preencha as seções do template com informações baseadas na análise e no currículo original
+    2. Preencha as seções do template com informações baseadas na análise e no **currículo original**
     3. Você PODE e DEVE criar/inventar conteúdo relevante para as seções, desde que seja coerente com:
     - As habilidades e experiências do candidato
     - Os pontos fortes e fracos identificados na análise
@@ -414,16 +412,32 @@ def create_rewrite_prompt_template():
     - As habilidades faltantes identificadas na análise
     - As habilidades subutilizadas identificadas na análise
     4. Seções a preencher:
-    - **Resumo Profissional**:  Crie um novo "Resumo" de 3 a 4 linhas conectando a senioridade do candidato à dor principal da vaga.
-    - **Experiências**: Não invente o nome das empresas nem a data de início e fim das experiências. Adeque o nome da posição/cargo ao da vaga
+    - **Resumo Profissional**: 
+        "Resumo Profissional" de um currículo para torná-lo altamente magnético e otimizado para uma vaga específica.
+        Instruções:
+        - Analise a Descrição da Vaga: Identifique as 3 competências técnicas (hard skills) e as 2 competências comportamentais (soft skills) mais críticas.
+        - Analise o Currículo: Extraia as conquistas e experiências que mais se conectam com as necessidades da vaga.
+        - Redação do Resumo: Escreva um parágrafo de 4 a 6 linhas que siga a estrutura:
+            - [Título Profissional] + [Tempo de Experiência] + [Principal Especialidade].
+            - Mencione uma conquista quantificável (números, % ou resultados).
+            - Inclua as palavras-chave principais da vaga de forma natural.
+            Diretrizes de Estilo:
+                - Use tom profissional, direto e focado em resultados.
+                - Evite clichês como "apaixonado por desafios" ou "proativo".
+                - Use verbos de ação (Ex: Gerenciei, Desenvolvi, Reduzi, Implementei).
+
+    - **Experiências**: Selecione as experiências profissionais do currículo que sejam mais relevantes para a vaga. Não invente o nome das empresas nem a data de início e fim das experiências. Adeque o nome da posição/cargo ao da vaga
         - Adeque cada experiência profissional do currículo, para ficarem aderente aos requisitos da vaga.
         - Para cada uma, melhore, crie 2 casos mais relevantes, contextualizados com a respectiva área.
         - Reescreva 3 pontos para cada uma, focados no Modelo STAR: "Contexto + Verbo de Ação + Contexto Técnico + Resultado".
-    - **Projetos e Consultorias Relevantes**: Crie 2 a 4 projetos, contendo nome de empresa e data fictícios que demonstrem as habilidades necessárias para a vaga
-    - **Hard Skills**: Liste de 4 a 6 habilidades técnicas relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
-    - **Soft Skills**: Liste de 4 a 6 habilidades comportamentais relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
+        - As posições/cargos das experiências profissionais do currículo devem ser adequadas ao da vaga.
+    - **Formação Acadêmica**:
+        - Não invente a instituição de ensino nem o título do curso. Apenas liste as formações acadêmicas do currículo.
+    - **Projetos e Consultorias Relevantes**: Crie 2 a 4 projetos, contendo nome de empresa e data fake, que demonstrem as habilidades necessárias para a vaga. O nome da empresa deve ser criativo (evite X, YZ etc...).
+    - **Hard Skills**: Identifique as hard skills da vaga e adicione-os, inserindo mais outras adjacentes para completar as 4 a 6 hard skills.
+    - **Soft Skills**: Identifique as soft skills da vaga e adicione-os, inserindo mais outras adjacentes para completar as 4 a 6 soft skills.
     - **Certificações**: Liste de 4 a 6 certificações do curriculum que estejam alinhadas direta ou indiretamente com a vaga. não invente certificações
-    - **Cursos e Treinamentos**: Liste de 4 a 6  cursos e treinamentos do curriculum relevantes, não invente cursos e treinamentos.
+    - **Cursos e Treinamentos**: Liste de 4 a 6 cursos e treinamentos do curriculum relevantes, não invente cursos e treinamentos.
     5. Use linguagem {style}
     6. Mantenha a estrutura e formatação exata do template
     7. {focus_instruction}
@@ -601,178 +615,500 @@ def convert_markdown_to_text(markdown_text):
     return text
 
 
-def generate_pdf_from_cv(cv_content, filename=None):
+def generate_pdf_from_cv(cv_content, filename=None, primary_color="#2563eb"):
     """
-    Gera um PDF a partir do conteúdo do currículo.
+    Gera um PDF profissional a partir do conteúdo do currículo em markdown.
+    
+    Características:
+    - 4 níveis de hierarquia tipográfica
+    - Ícones para cada seção
+    - Cabeçalho colorido com dados de contato
+    - Cores temáticas personalizáveis
+    - Quebra de página inteligente (evita seções órfãs)
+    - Espaçamento 1.5
+    - Fonte tamanho 11 (normal)
+    - Fonte moderna (Helvetica)
     
     Args:
         cv_content: Conteúdo do currículo em markdown/texto
         filename: Nome do arquivo (opcional)
+        primary_color: Cor predominante em hex (ex: "#2563eb")
     
     Returns:
         bytes: Conteúdo do PDF em bytes
     """
     try:
-        from reportlab.lib.pagesizes import letter, A4
+        from reportlab.lib.pagesizes import A4
         from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-        from reportlab.lib.units import inch
-        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
-        from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_JUSTIFY
-        from reportlab.pdfbase import pdfmetrics
-        from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.lib.units import cm
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
+        from reportlab.lib.enums import TA_LEFT
+        from reportlab.lib import colors
+        
+        # Mapeamento de seções para ícones
+        SECTION_ICONS = {
+            "Resumo Profissional": "",
+            "Resumo": "",
+            "Experiências": "",
+            "Experiência": "",
+            "Formação Acadêmica": "",
+            "Formação": "",
+            "Certificações": "",
+            "Certificação": "",
+            "Cursos": "",
+            "Cursos e Treinamentos": "",
+            "Projetos e Consultorias Relevantes": "",
+            "Projetos": "",
+            "Hard Skills": "",
+            "Habilidades Técnicas": "",
+            "Soft Skills": "",
+            "Habilidades Comportamentais": ""
+        }
+        
+        def get_section_icon(section_name):
+            """Retorna o ícone para uma seção"""
+            for key, icon in SECTION_ICONS.items():
+                if key.lower() in section_name.lower():
+                    return icon
+            return "📋"  # Ícone padrão
+        
+        def hex_to_color(hex_color):
+            """Converte cor hex para objeto colors do reportlab"""
+            hex_color = hex_color.lstrip('#')
+            return colors.HexColor(f"#{hex_color}")
+        
+        def escape_xml(text):
+            """Escapa caracteres especiais para XML, preservando tags HTML"""
+            # Protege tags HTML existentes
+            text = text.replace('<b>', '___BOLD_START___')
+            text = text.replace('</b>', '___BOLD_END___')
+            text = text.replace('<i>', '___ITALIC_START___')
+            text = text.replace('</i>', '___ITALIC_END___')
+            text = text.replace('<br/>', '___BR___')
+            
+            # Escapa caracteres especiais
+            text = text.replace('&', '&amp;')
+            text = text.replace('<', '&lt;')
+            text = text.replace('>', '&gt;')
+            
+            # Restaura tags HTML
+            text = text.replace('___BOLD_START___', '<b>')
+            text = text.replace('___BOLD_END___', '</b>')
+            text = text.replace('___ITALIC_START___', '<i>')
+            text = text.replace('___ITALIC_END___', '</i>')
+            text = text.replace('___BR___', '<br/>')
+            
+            return text
+        
+        def process_markdown(text):
+            """Processa markdown básico para HTML"""
+            # Processa negrito **texto**
+            text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+            # Processa itálico *texto* (mas não se já está em negrito)
+            text = re.sub(r'(?<!<b>)\*([^*<]+?)\*(?!</b>)', r'<i>\1</i>', text)
+            # Processa links [text](url) -> text
+            text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+            return text
         
         # Cria buffer em memória
         buffer = BytesIO()
         
-        # Cria documento PDF
-        doc = SimpleDocTemplate(buffer, pagesize=A4,
-                              rightMargin=72, leftMargin=72,
-                              topMargin=72, bottomMargin=18)
+        # Cria documento PDF com margens
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            rightMargin=2*cm,
+            leftMargin=2*cm,
+            topMargin=3*cm,  # Espaço para cabeçalho
+            bottomMargin=2*cm
+        )
         
         # Estilos
         styles = getSampleStyleSheet()
+        base_font = 'Helvetica'
+        base_font_bold = 'Helvetica-Bold'
+        base_font_italic = 'Helvetica-Oblique'
+        base_font_bold_italic = 'Helvetica-BoldOblique'
         
-        # Estilo para título
-        title_style = ParagraphStyle(
-            'CustomTitle',
+        # Espaçamento 1.5 (leading = fontSize * 1.5)
+        base_font_size = 11
+        base_leading = base_font_size * 1.5
+        
+        # Nível 1: Nome do profissional (maior, negrito)
+        name_style = ParagraphStyle(
+            'NameStyle',
             parent=styles['Heading1'],
-            fontSize=16,
-            textColor='#1a1a1a',
+            fontSize=24,
+            textColor=colors.HexColor('#1a1a1a'),
             spaceAfter=12,
+            spaceBefore=0,
             alignment=TA_LEFT,
-            fontName='Helvetica-Bold'
+            fontName=base_font_bold,
+            leading=36
         )
         
-        # Estilo para subtítulo
-        subtitle_style = ParagraphStyle(
-            'CustomSubtitle',
+        # Nível 2: Título de seção (com ícone, sem background)
+        section_style = ParagraphStyle(
+            'SectionStyle',
             parent=styles['Heading2'],
             fontSize=14,
-            textColor='#2c3e50',
+            textColor=hex_to_color(primary_color),  # Usa a cor como texto, não background
             spaceAfter=8,
+            spaceBefore=16,
+            alignment=TA_LEFT,
+            fontName=base_font_bold,
+            leading=21
+        )
+        
+        # Nível 3: Subtítulo de seção (experiências, projetos)
+        subtitle_style = ParagraphStyle(
+            'SubtitleStyle',
+            parent=styles['Heading3'],
+            fontSize=13,
+            textColor=colors.HexColor('#2c3e50'),
+            spaceAfter=6,
             spaceBefore=12,
             alignment=TA_LEFT,
-            fontName='Helvetica-Bold'
+            fontName=base_font_bold,
+            leading=19.5
+        )
+        
+        # Nível 4: Subtítulo de subtítulo
+        subsubtitle_style = ParagraphStyle(
+            'SubSubtitleStyle',
+            parent=styles['Heading4'],
+            fontSize=12,
+            textColor=colors.HexColor('#4a5568'),
+            spaceAfter=4,
+            spaceBefore=8,
+            alignment=TA_LEFT,
+            fontName=base_font_bold,
+            leading=18
         )
         
         # Estilo para texto normal
         normal_style = ParagraphStyle(
-            'CustomNormal',
+            'NormalStyle',
             parent=styles['Normal'],
-            fontSize=10,
-            textColor='#333333',
-            spaceAfter=6,
+            fontSize=base_font_size,
+            textColor=colors.HexColor('#333333'),
+            spaceAfter=2,  # Reduzido para bullets mais próximos
             alignment=TA_LEFT,
-            leading=14
+            fontName=base_font,
+            leading=base_leading
         )
         
-        # Estilo para itálico (experiências)
+        # Estilo para itálico (empresa, período)
         italic_style = ParagraphStyle(
-            'CustomItalic',
+            'ItalicStyle',
             parent=styles['Normal'],
-            fontSize=9,
-            textColor='#555555',
+            fontSize=base_font_size,
+            textColor=colors.HexColor('#555555'),
             spaceAfter=4,
             alignment=TA_LEFT,
-            leading=12,
-            fontName='Helvetica-Oblique'
+            fontName=base_font_italic,
+            leading=base_leading
         )
         
-        # Processa o conteúdo mantendo a estrutura
+        # Estilo para contato no cabeçalho
+        contact_style = ParagraphStyle(
+            'ContactStyle',
+            parent=styles['Normal'],
+            fontSize=10,
+            textColor=colors.white,
+            spaceAfter=4,
+            alignment=TA_LEFT,
+            fontName=base_font,
+            leading=15
+        )
+        
+        # Processa o conteúdo
         lines = cv_content.split('\n')
         
         story = []
-        in_section = False
+        professional_name = None
+        professional_position = None
+        contact_info = []
+        current_section = None
+        section_content = []
+        
+        # Primeira passagem: extrai nome, posição e contato (até encontrar primeira seção)
+        header_end_index = len(lines)
+        found_first_section = False
         
         for i, line in enumerate(lines):
-            original_line = line
-            line = line.strip()
+            line_stripped = line.strip()
+            
+            if not line_stripped:
+                continue
+            
+            # Detecta nome no formato **_[NAME]_** ou **__[NAME]__** ou **[NAME]**
+            if not professional_name and line_stripped.startswith('**'):
+                # Remove markdown: **_texto_** ou **__texto__** ou **texto**
+                name_candidate = line_stripped
+                # Remove ** do início e fim
+                name_candidate = re.sub(r'^\*\*', '', name_candidate)
+                name_candidate = re.sub(r'\*\*$', '', name_candidate)
+                # Remove _ do início e fim (pode ter múltiplos)
+                name_candidate = re.sub(r'^_+', '', name_candidate)
+                name_candidate = re.sub(r'_+$', '', name_candidate)
+                name_candidate = name_candidate.strip()
+                
+                # Verifica se não é uma seção conhecida
+                is_section = name_candidate in SECTION_ICONS.keys() or any(key.lower() in name_candidate.lower() for key in SECTION_ICONS.keys())
+                
+                if not is_section and name_candidate and not any(icon in name_candidate for icon in ['✉', '✆', '[in]', 'http']):
+                    professional_name = name_candidate
+                    continue
+            
+            # Detecta posição no formato **__[POSITION]__** (linha após o nome)
+            if professional_name and not professional_position and line_stripped.startswith('**'):
+                position_candidate = line_stripped
+                # Remove markdown: **__texto__** ou **texto**
+                position_candidate = re.sub(r'^\*\*', '', position_candidate)
+                position_candidate = re.sub(r'\*\*$', '', position_candidate)
+                # Remove _ do início e fim (pode ter múltiplos)
+                position_candidate = re.sub(r'^_+', '', position_candidate)
+                position_candidate = re.sub(r'_+$', '', position_candidate)
+                position_candidate = position_candidate.strip()
+                
+                # Verifica se não é uma seção conhecida
+                is_section = position_candidate in SECTION_ICONS.keys() or any(key.lower() in position_candidate.lower() for key in SECTION_ICONS.keys())
+                
+                if not is_section and position_candidate and not any(icon in position_candidate for icon in ['✉', '✆', '[in]', 'http']):
+                    professional_position = position_candidate
+                    continue
+            
+            # Detecta primeira seção para marcar fim do cabeçalho
+            if not found_first_section and line_stripped.startswith('**') and line_stripped.endswith('**') and not line_stripped.startswith('- **'):
+                section_title = line_stripped.replace('**', '').strip()
+                # Remove underscores se houver
+                section_title = re.sub(r'^_+', '', section_title)
+                section_title = re.sub(r'_+$', '', section_title)
+                section_title = section_title.strip()
+                # Verifica se é uma seção conhecida
+                is_section = section_title in SECTION_ICONS.keys() or any(key.lower() in section_title.lower() for key in SECTION_ICONS.keys())
+                
+                if is_section:
+                    header_end_index = i
+                    found_first_section = True
+                    continue
+            
+            # Detecta informações de contato (apenas antes da primeira seção)
+            if i < header_end_index and not found_first_section:
+                # Ignora linhas que são apenas separadores (****)
+                if line_stripped.replace('*', '').strip() == '':
+                    continue
+                    
+                if '✉' in line_stripped or '@' in line_stripped:
+                    # Remove ✉ se presente e limpa
+                    contact_line = line_stripped.replace('✉', '').strip()
+                    if contact_line:
+                        contact_info.append(contact_line)
+                elif '✆' in line_stripped or re.search(r'\(\d{2}\)', line_stripped):
+                    # Remove ✆ se presente e limpa
+                    contact_line = line_stripped.replace('✆', '').strip()
+                    if contact_line:
+                        contact_info.append(contact_line)
+                elif '[in]' in line_stripped.lower() or 'linkedin' in line_stripped.lower() or 'http' in line_stripped.lower():
+                    # Limpa o formato [in] se presente
+                    contact_line = re.sub(r'\[in\]\s*', '', line_stripped, flags=re.IGNORECASE).strip()
+                    if contact_line:
+                        contact_info.append(contact_line)
+        
+        # Adiciona cabeçalho colorido
+        if professional_name or professional_position or contact_info:
+            header_data = []
+            
+            # Nome (nível 1)
+            if professional_name:
+                name_text = escape_xml(professional_name)
+                header_data.append([Paragraph(name_text, name_style)])
+            
+            # Posição (nível 2, menor que o nome)
+            if professional_position:
+                # Estilo para posição (menor que o nome)
+                position_style = ParagraphStyle(
+                    'PositionStyle',
+                    parent=name_style,
+                    fontSize=16,
+                    textColor=colors.HexColor('#4a5568'),
+                    spaceAfter=8,
+                    spaceBefore=0,
+                    alignment=TA_LEFT,
+                    fontName=base_font,
+                    leading=24
+                )
+                position_text = escape_xml(professional_position)
+                header_data.append([Paragraph(position_text, position_style)])
+            
+            # Dados de contato
+            if contact_info:
+                contact_items = []
+                for ci in contact_info:
+                    # Processa markdown primeiro, depois escapa XML
+                    processed = process_markdown(ci)
+                    escaped = escape_xml(processed)
+                    contact_items.append(escaped)
+                contact_text = '<br/>'.join(contact_items)
+                header_data.append([Paragraph(contact_text, contact_style)])
+            
+            if header_data:
+                header_table = Table(header_data, colWidths=[doc.width])
+                header_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, -1), hex_to_color(primary_color)),
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 12),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 12),
+                    ('TOPPADDING', (0, 0), (-1, -1), 16),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 16),
+                ]))
+                story.append(header_table)
+                story.append(Spacer(1, 20))
+        
+        # Segunda passagem: processa conteúdo (pula cabeçalho)
+        i = header_end_index
+        current_subtitle_group = []  # Agrupa nível 3 com seu conteúdo
+        
+        while i < len(lines):
+            line = lines[i].strip()
             
             if not line:
-                if not in_section:
-                    story.append(Spacer(1, 6))
+                i += 1
                 continue
             
-            # Detecta seções principais (começam com ** e terminam com **)
+            # Detecta seção principal (nível 2) - **Nome da Seção**
             if line.startswith('**') and line.endswith('**') and not line.startswith('- **'):
-                # Remove ** e adiciona como subtítulo
                 section_title = line.replace('**', '').strip()
-                story.append(Spacer(1, 12))
-                story.append(Paragraph(section_title, subtitle_style))
-                story.append(Spacer(1, 6))
-                in_section = True
-                continue
-            
-            # Detecta separadores (---)
-            if line.startswith('---'):
+                icon = get_section_icon(section_title)
+                
+                # Adiciona grupo de nível 3 anterior se houver (com KeepTogether)
+                if current_subtitle_group:
+                    story.append(KeepTogether(current_subtitle_group))
+                    current_subtitle_group = []
+                
+                # Adiciona conteúdo da seção anterior diretamente (sem KeepTogether - pode ser órfão)
+                if current_section and section_content:
+                    story.extend(section_content)
+                    section_content = []
+                
+                # Cria parágrafo simples para seção (sem background)
+                section_text = f"{icon} {section_title}"
+                section_para = Paragraph(escape_xml(section_text), section_style)
+                story.append(section_para)
                 story.append(Spacer(1, 8))
+                current_section = section_title
+                i += 1
                 continue
             
-            # Detecta títulos de experiência (começam com - **)
-            if line.startswith('- **'):
-                # Remove - ** e ** do final
+            # Detecta subtítulo de seção (nível 3) - - **[POSITION]**
+            if line.startswith('- **') and line.endswith('**'):
+                # Se havia um grupo anterior de nível 3, adiciona com KeepTogether
+                if current_subtitle_group:
+                    story.append(KeepTogether(current_subtitle_group))
+                    current_subtitle_group = []
+                
                 exp_title = line.replace('- **', '').replace('**', '').strip()
-                story.append(Spacer(1, 8))
-                story.append(Paragraph(exp_title, subtitle_style))
-                story.append(Spacer(1, 4))
+                # Processa markdown primeiro, depois escapa XML
+                exp_processed = process_markdown(exp_title)
+                exp_text = escape_xml(exp_processed)
+                # Inicia novo grupo de nível 3
+                current_subtitle_group.append(Paragraph(exp_text, subtitle_style))
+                current_subtitle_group.append(Spacer(1, 4))
+                i += 1
                 continue
             
-            # Detecta itálico (começam com - * mas não terminam com *)
-            if line.startswith('- *') and not line.endswith('*'):
-                # Remove - * do início
-                italic_text = line.replace('- *', '', 1).strip()
-                # Remove * do final se existir
-                if italic_text.endswith('*'):
-                    italic_text = italic_text[:-1].strip()
-                story.append(Paragraph(italic_text, italic_style))
-                story.append(Spacer(1, 4))
+            # Detecta subtítulo de subtítulo (nível 4) - empresa em itálico
+            if line.startswith('_') and line.endswith('_'):
+                company_text = line.replace('_', '').strip()
+                if company_text:
+                    # Processa markdown primeiro, depois escapa XML
+                    company_processed = process_markdown(company_text)
+                    company_escaped = escape_xml(company_processed)
+                    company_para = Paragraph(company_escaped, italic_style)
+                    # Adiciona ao grupo de nível 3 se existir, senão à seção
+                    if current_subtitle_group:
+                        current_subtitle_group.append(company_para)
+                        current_subtitle_group.append(Spacer(1, 2))
+                    else:
+                        section_content.append(company_para)
+                        section_content.append(Spacer(1, 2))
+                i += 1
                 continue
             
-            # Detecta itálico completo (começam e terminam com *)
-            if line.startswith('- *') and line.endswith('*') and line.count('*') >= 2:
+            # Detecta itens de lista com itálico (nível 4) - - *texto*
+            if line.startswith('- *') and line.endswith('*'):
                 italic_text = line.replace('- *', '').replace('*', '').strip()
-                story.append(Paragraph(italic_text, italic_style))
-                story.append(Spacer(1, 4))
+                if italic_text:
+                    # Processa markdown primeiro, depois escapa XML
+                    italic_processed = process_markdown(italic_text)
+                    italic_escaped = escape_xml(italic_processed)
+                    italic_para = Paragraph(italic_escaped, italic_style)
+                    # Adiciona ao grupo de nível 3 se existir, senão à seção
+                    if current_subtitle_group:
+                        current_subtitle_group.append(italic_para)
+                        current_subtitle_group.append(Spacer(1, 2))
+                    else:
+                        section_content.append(italic_para)
+                        section_content.append(Spacer(1, 2))
+                i += 1
                 continue
             
-            # Detecta listas simples (começam com -)
+            # Detecta itens de lista simples (nível 4)
             if line.startswith('- '):
                 list_item = line.replace('- ', '', 1).strip()
-                # Remove formatação markdown restante
-                list_item = re.sub(r'\*\*(.+?)\*\*', r'\1', list_item)
-                list_item = re.sub(r'\*(.+?)\*', r'\1', list_item)
-                story.append(Paragraph(f"• {list_item}", normal_style))
-                story.append(Spacer(1, 4))
+                # Processa markdown primeiro
+                list_item = process_markdown(list_item)
+                # Remove formatação markdown restante que não foi processada
+                list_item = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', list_item)
+                list_item = re.sub(r'\*(.+?)\*', r'<i>\1</i>', list_item)
+                # Depois escapa XML
+                list_item_escaped = escape_xml(list_item)
+                bullet_text = f"• {list_item_escaped}"
+                bullet_para = Paragraph(bullet_text, normal_style)
+                # Adiciona ao grupo de nível 3 se existir, senão à seção
+                if current_subtitle_group:
+                    current_subtitle_group.append(bullet_para)
+                    current_subtitle_group.append(Spacer(1, 2))  # Espaçamento reduzido
+                else:
+                    section_content.append(bullet_para)
+                    section_content.append(Spacer(1, 2))  # Espaçamento reduzido
+                i += 1
                 continue
             
-            # Texto normal - processa markdown e escapa para HTML/XML
-            text_line = line
-            # Processa markdown: **texto** vira <b>texto</b>
-            text_line = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text_line)
-            # Processa markdown: *texto* vira <i>texto</i> (mas não se já está em negrito)
-            text_line = re.sub(r'(?<!<b>)\*([^*]+?)\*(?!</b>)', r'<i>\1</i>', text_line)
+            # Detecta separadores
+            if line.startswith('---'):
+                if current_subtitle_group:
+                    current_subtitle_group.append(Spacer(1, 4))
+                else:
+                    section_content.append(Spacer(1, 4))
+                i += 1
+                continue
             
-            # Escapa caracteres especiais para XML/HTML
-            # Primeiro, protege as tags HTML que criamos
-            text_line = text_line.replace('<b>', '___BOLD_START___')
-            text_line = text_line.replace('</b>', '___BOLD_END___')
-            text_line = text_line.replace('<i>', '___ITALIC_START___')
-            text_line = text_line.replace('</i>', '___ITALIC_END___')
+            # Texto normal
+            if line and not line.startswith('**') and not line.startswith('-'):
+                # Processa markdown primeiro, depois escapa XML
+                text_processed = process_markdown(line)
+                text_escaped = escape_xml(text_processed)
+                if text_escaped.strip():
+                    text_para = Paragraph(text_escaped, normal_style)
+                    # Adiciona ao grupo de nível 3 se existir, senão à seção
+                    if current_subtitle_group:
+                        current_subtitle_group.append(text_para)
+                        current_subtitle_group.append(Spacer(1, 2))
+                    else:
+                        section_content.append(text_para)
+                        section_content.append(Spacer(1, 2))
             
-            # Escapa caracteres especiais
-            text_line = text_line.replace('&', '&amp;')
-            text_line = text_line.replace('<', '&lt;')
-            text_line = text_line.replace('>', '&gt;')
-            
-            # Restaura as tags HTML
-            text_line = text_line.replace('___BOLD_START___', '<b>')
-            text_line = text_line.replace('___BOLD_END___', '</b>')
-            text_line = text_line.replace('___ITALIC_START___', '<i>')
-            text_line = text_line.replace('___ITALIC_END___', '</i>')
-            
-            if text_line.strip():
-                story.append(Paragraph(text_line, normal_style))
-                story.append(Spacer(1, 4))
+            i += 1
+        
+        # Adiciona último grupo de nível 3 se houver
+        if current_subtitle_group:
+            story.append(KeepTogether(current_subtitle_group))
+        
+        # Adiciona última seção (sem KeepTogether - pode ser órfã)
+        if current_section and section_content:
+            story.extend(section_content)
         
         # Gera PDF
         doc.build(story)
@@ -790,4 +1126,339 @@ def generate_pdf_from_cv(cv_content, filename=None):
         return None
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
+        import traceback
+        st.error(traceback.format_exc())
+        return None
+
+
+def generate_docx_from_cv(cv_content, filename=None, primary_color="#2563eb"):
+    """
+    Gera um arquivo DOCX (Word) profissional a partir do conteúdo do currículo em markdown.
+    
+    Características:
+    - 4 níveis de hierarquia tipográfica
+    - Ícones para cada seção
+    - Cabeçalho colorido com dados de contato
+    - Cores temáticas personalizáveis
+    - Espaçamento 1.5
+    - Fonte tamanho 11 (normal)
+    - Fonte moderna (Calibri)
+    
+    Args:
+        cv_content: Conteúdo do currículo em markdown/texto
+        filename: Nome do arquivo (opcional)
+        primary_color: Cor predominante em hex (ex: "#2563eb")
+    
+    Returns:
+        bytes: Conteúdo do DOCX em bytes
+    """
+    try:
+        from docx import Document
+        from docx.shared import Pt, RGBColor, Inches
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        from docx.oxml.ns import qn
+        from docx.oxml import OxmlElement
+        import re
+        
+        # Mapeamento de seções para ícones (mesmo do PDF)
+        SECTION_ICONS = {
+            "Resumo Profissional": "👤",
+            "Resumo": "👤",
+            "Experiências": "💼",
+            "Experiência": "💼",
+            "Formação Acadêmica": "🎓",
+            "Formação": "🎓",
+            "Certificações": "🏆",
+            "Certificação": "🏆",
+            "Cursos": "📚",
+            "Cursos e Treinamentos": "📚",
+            "Projetos e Consultorias Relevantes": "🚀",
+            "Projetos": "🚀",
+            "Hard Skills": "⚙️",
+            "Habilidades Técnicas": "⚙️",
+            "Soft Skills": "🤝",
+            "Habilidades Comportamentais": "🤝"
+        }
+        
+        def get_section_icon(section_name):
+            """Retorna o ícone para uma seção"""
+            for key, icon in SECTION_ICONS.items():
+                if key.lower() in section_name.lower():
+                    return icon
+            return "📋"  # Ícone padrão
+        
+        def hex_to_rgb(hex_color):
+            """Converte cor hex para RGB"""
+            hex_color = hex_color.lstrip('#')
+            return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        
+        def process_markdown(text):
+            """Processa markdown básico"""
+            # Processa negrito **texto**
+            text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+            # Processa itálico *texto*
+            text = re.sub(r'(?<!<b>)\*([^*<]+?)\*(?!</b>)', r'\1', text)
+            # Processa links [text](url) -> text
+            text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+            return text
+        
+        # Cria documento Word
+        doc = Document()
+        
+        # Configuração de fonte padrão
+        style = doc.styles['Normal']
+        font = style.font
+        font.name = 'Calibri'
+        font.size = Pt(11)
+        
+        # Processa o conteúdo
+        lines = cv_content.split('\n')
+        
+        professional_name = None
+        professional_position = None
+        contact_info = []
+        header_end_index = len(lines)
+        found_first_section = False
+        
+        # Primeira passagem: extrai nome, posição e contato
+        for i, line in enumerate(lines):
+            line_stripped = line.strip()
+            
+            if not line_stripped:
+                continue
+            
+            # Detecta nome
+            if not professional_name and line_stripped.startswith('**'):
+                name_candidate = line_stripped
+                name_candidate = re.sub(r'^\*\*', '', name_candidate)
+                name_candidate = re.sub(r'\*\*$', '', name_candidate)
+                name_candidate = re.sub(r'^_+', '', name_candidate)
+                name_candidate = re.sub(r'_+$', '', name_candidate)
+                name_candidate = name_candidate.strip()
+                
+                is_section = name_candidate in SECTION_ICONS.keys() or any(key.lower() in name_candidate.lower() for key in SECTION_ICONS.keys())
+                
+                if not is_section and name_candidate and not any(icon in name_candidate for icon in ['✉', '✆', '[in]', 'http']):
+                    professional_name = name_candidate
+                    continue
+            
+            # Detecta posição
+            if professional_name and not professional_position and line_stripped.startswith('**'):
+                position_candidate = line_stripped
+                position_candidate = re.sub(r'^\*\*', '', position_candidate)
+                position_candidate = re.sub(r'\*\*$', '', position_candidate)
+                position_candidate = re.sub(r'^_+', '', position_candidate)
+                position_candidate = re.sub(r'_+$', '', position_candidate)
+                position_candidate = position_candidate.strip()
+                
+                is_section = position_candidate in SECTION_ICONS.keys() or any(key.lower() in position_candidate.lower() for key in SECTION_ICONS.keys())
+                
+                if not is_section and position_candidate and not any(icon in position_candidate for icon in ['✉', '✆', '[in]', 'http']):
+                    professional_position = position_candidate
+                    continue
+            
+            # Detecta primeira seção
+            if not found_first_section and line_stripped.startswith('**') and line_stripped.endswith('**') and not line_stripped.startswith('- **'):
+                section_title = line_stripped.replace('**', '').strip()
+                section_title = re.sub(r'^_+', '', section_title)
+                section_title = re.sub(r'_+$', '', section_title)
+                section_title = section_title.strip()
+                is_section = section_title in SECTION_ICONS.keys() or any(key.lower() in section_title.lower() for key in SECTION_ICONS.keys())
+                
+                if is_section:
+                    header_end_index = i
+                    found_first_section = True
+                    continue
+            
+            # Detecta contato
+            if i < header_end_index and not found_first_section:
+                if line_stripped.replace('*', '').strip() == '':
+                    continue
+                    
+                if '✉' in line_stripped or '@' in line_stripped:
+                    contact_line = line_stripped.replace('✉', '').strip()
+                    if contact_line:
+                        contact_info.append(contact_line)
+                elif '✆' in line_stripped or re.search(r'\(\d{2}\)', line_stripped):
+                    contact_line = line_stripped.replace('✆', '').strip()
+                    if contact_line:
+                        contact_info.append(contact_line)
+                elif '[in]' in line_stripped.lower() or 'linkedin' in line_stripped.lower() or 'http' in line_stripped.lower():
+                    contact_line = re.sub(r'\[in\]\s*', '', line_stripped, flags=re.IGNORECASE).strip()
+                    if contact_line:
+                        contact_info.append(contact_line)
+        
+        # Adiciona cabeçalho colorido
+        if professional_name or professional_position or contact_info:
+            # Nome
+            if professional_name:
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                run = p.add_run(professional_name)
+                run.font.name = 'Calibri'
+                run.font.size = Pt(24)
+                run.font.bold = True
+                run.font.color.rgb = RGBColor(26, 26, 26)
+                p.space_after = Pt(6)
+            
+            # Posição
+            if professional_position:
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                run = p.add_run(professional_position)
+                run.font.name = 'Calibri'
+                run.font.size = Pt(16)
+                run.font.color.rgb = RGBColor(*hex_to_rgb('#4a5568'))
+                p.space_after = Pt(8)
+            
+            # Contato
+            if contact_info:
+                for ci in contact_info:
+                    p = doc.add_paragraph()
+                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                    run = p.add_run(process_markdown(ci))
+                    run.font.name = 'Calibri'
+                    run.font.size = Pt(10)
+                    run.font.color.rgb = RGBColor(255, 255, 255)
+                    p.space_after = Pt(4)
+            
+            # Adiciona espaçamento após cabeçalho
+            doc.add_paragraph().space_after = Pt(20)
+        
+        # Segunda passagem: processa conteúdo
+        i = header_end_index
+        current_section = None
+        
+        while i < len(lines):
+            line = lines[i].strip()
+            
+            if not line:
+                i += 1
+                continue
+            
+            # Detecta seção principal (nível 2)
+            if line.startswith('**') and line.endswith('**') and not line.startswith('- **'):
+                section_title = line.replace('**', '').strip()
+                section_title = re.sub(r'^_+', '', section_title)
+                section_title = re.sub(r'_+$', '', section_title)
+                section_title = section_title.strip()
+                icon = get_section_icon(section_title)
+                
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                run = p.add_run(f"{icon} {section_title}")
+                run.font.name = 'Calibri'
+                run.font.size = Pt(14)
+                run.font.bold = True
+                rgb = hex_to_rgb(primary_color)
+                run.font.color.rgb = RGBColor(*rgb)
+                p.space_before = Pt(16)
+                p.space_after = Pt(8)
+                
+                current_section = section_title
+                i += 1
+                continue
+            
+            # Detecta subtítulo de seção (nível 3)
+            if line.startswith('- **') and line.endswith('**'):
+                exp_title = line.replace('- **', '').replace('**', '').strip()
+                exp_title = process_markdown(exp_title)
+                
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                run = p.add_run(exp_title)
+                run.font.name = 'Calibri'
+                run.font.size = Pt(13)
+                run.font.bold = True
+                run.font.color.rgb = RGBColor(44, 62, 80)
+                p.space_before = Pt(12)
+                p.space_after = Pt(4)
+                i += 1
+                continue
+            
+            # Detecta empresa em itálico (nível 4)
+            if line.startswith('_') and line.endswith('_'):
+                company_text = line.replace('_', '').strip()
+                if company_text:
+                    company_text = process_markdown(company_text)
+                    p = doc.add_paragraph()
+                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                    run = p.add_run(company_text)
+                    run.font.name = 'Calibri'
+                    run.font.size = Pt(11)
+                    run.font.italic = True
+                    run.font.color.rgb = RGBColor(85, 85, 85)
+                    p.space_after = Pt(2)
+                i += 1
+                continue
+            
+            # Detecta itens de lista com itálico
+            if line.startswith('- *') and line.endswith('*'):
+                italic_text = line.replace('- *', '').replace('*', '').strip()
+                if italic_text:
+                    italic_text = process_markdown(italic_text)
+                    p = doc.add_paragraph(style='List Bullet')
+                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                    run = p.add_run(italic_text)
+                    run.font.name = 'Calibri'
+                    run.font.size = Pt(11)
+                    run.font.italic = True
+                    run.font.color.rgb = RGBColor(85, 85, 85)
+                    p.space_after = Pt(2)
+                i += 1
+                continue
+            
+            # Detecta itens de lista simples
+            if line.startswith('- '):
+                list_item = line.replace('- ', '', 1).strip()
+                list_item = process_markdown(list_item)
+                list_item = re.sub(r'\*\*(.+?)\*\*', r'\1', list_item)
+                list_item = re.sub(r'\*(.+?)\*', r'\1', list_item)
+                
+                p = doc.add_paragraph(style='List Bullet')
+                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                run = p.add_run(list_item)
+                run.font.name = 'Calibri'
+                run.font.size = Pt(11)
+                run.font.color.rgb = RGBColor(51, 51, 51)
+                p.space_after = Pt(2)
+                i += 1
+                continue
+            
+            # Detecta separadores
+            if line.startswith('---'):
+                doc.add_paragraph().space_after = Pt(8)
+                i += 1
+                continue
+            
+            # Texto normal
+            if line and not line.startswith('**') and not line.startswith('-'):
+                text_processed = process_markdown(line)
+                if text_processed.strip():
+                    p = doc.add_paragraph()
+                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                    run = p.add_run(text_processed)
+                    run.font.name = 'Calibri'
+                    run.font.size = Pt(11)
+                    run.font.color.rgb = RGBColor(51, 51, 51)
+                    p.space_after = Pt(2)
+            
+            i += 1
+        
+        # Salva em buffer
+        buffer = BytesIO()
+        doc.save(buffer)
+        buffer.seek(0)
+        docx_bytes = buffer.getvalue()
+        buffer.close()
+        
+        return docx_bytes
+        
+    except ImportError:
+        st.error("Biblioteca python-docx não instalada. Execute: pip install python-docx")
+        return None
+    except Exception as e:
+        st.error(f"Erro ao gerar DOCX: {e}")
+        import traceback
+        st.error(traceback.format_exc())
         return None

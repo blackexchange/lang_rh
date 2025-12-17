@@ -1,11 +1,10 @@
-**RODNEY NEVILLE**
+**_[NAME]_**
+__[POSITION]__
 
-✉︎ asdas@gmail.com
-
-[in] http://linkedin/asdasd
-
-✆ (71) 9890-908098
-
+✆ +55 (71) 98715-8083
+✉ rodneyneville@gmail.com
+[in] https://www.linkedin.com/in/rodneyneville
+ ****
 
 **Resumo Profissional**  
 [SUMMARY]
@@ -14,74 +13,78 @@
 **Experiências**
 
 - **[POSITION]**
-    _[COMPANY]_ - (START - END)
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  [COMPANY] - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
   
 - **[POSITION]**
-    _[COMPANY]_ - (START - END)
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+    [COMPANY] - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
 
 - **[POSITION]**
-    _[COMPANY]_ - (START - END)
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+    [COMPANY] - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
 
 - **[POSITION]**
-    _[COMPANY]_ - (START - END)
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+    [COMPANY] - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+---
 
 **Formação Acadêmica**  
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+---
 
 **Certificações**
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-- [TITULO] ([ANO])
-
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+- [TITULO] (ANO)
+---
 
 **Cursos**
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
-- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+- [CURSO] - [INSTITUIÇÃO] (ANO)
+---
 
 **Projetos e Consultorias Relevantes**  
 - **[PROJETO]**
-  _[EMPRESA]_ - (START-END)
-    - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-    - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-    - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
-  
+  [EMPRESA] - (START-END)
+    - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+    - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+    - *[CONTEXT] + [ACTION] + [TECHNICALCONTEXT] + [RESULTS]*  
+---
+
 **Hard Skills**  
 - Desenvolvimento: [SKILL1, SKILL2,...]
 - Nuvem: [SKILL1, SKILL2,...]
 - Banco de Dados: [SKILL1, SKILL2,...]
 - IA: [SKILL1, SKILL2,...]
 - Outras Ferramentas: [SKILL1, SKILL2,...] 
+---
 
 **Soft Skills**  
 - [SKILL1]

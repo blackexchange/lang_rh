@@ -7,7 +7,14 @@ load_dotenv()
 
 st.set_page_config(page_title="Triagem e Análise de Currículos", page_icon="📄", layout="wide")
 
-id_model = "llama-3.3-70b-versatile"
+#id_model = "llama-3.3-70b-versatile"
+#id_model = "llama-3.3-70b-versatile"
+#id_model = "llama-3.3-70b-versatile"
+id_model = "openai/gpt-oss-120b"
+#id_model = "meta-llama/llama-guard-4-12b"
+#id_model = "groq/compound"
+#id_model = "allam-2-7b"
+#id_model="llama-3.1-8b-instant"
 temperature = 0.7
 json_file = 'curriculos.json'
 path_job_csv = "vagas.csv"
@@ -15,43 +22,56 @@ path_job_csv = "vagas.csv"
 llm = load_llm(id_model, temperature)
 
 job = {}
-job['title'] = "Engenheiro de Dados Pleno (IA)"
-job['description'] = "Engenheiro de Dados Pleno (IA):"
+job['title'] = "Desenvolvedor(a) Backend Sênior – Automação & Inteligência Artificial"
+job['description'] = "Desenvolvedor(a) Backend Sênior – Automação & Inteligência Artificial"
 job['details'] = """
-Experiência em modelagem, arquitetura e integração de dados (DW, Data Lake, Lakehouse).
-Domínio de Python e SQL, além de trabalhar bem com frameworks de processamento como Spark, Databricks, Airflow ou equivalentes.
-Vivência na construção de pipelines escaláveis e de alto desempenho, com práticas modernas de versionamento, testes e CI/CD.
-Conhecimento aplicado em soluções de Machine Learning/IA, incluindo preparação de dados para modelos, feature store, monitoramento e integração com modelos em produção.
-Experiência com serviços em nuvem (AWS, Azure ou GCP).
-Experiência em SQL Server, incluindo consultas, modelagem de dados e otimização de desempenho.
-Conhecimento em ferramentas de automação de processos, como UiPath, Open RPA, N8N ou similares.
- Diferenciais: Participação em projetos de automação IA (Chatgpt, Gemini,Grok, etc).
+#Missão do cargo
+Nosso cliente é uma empresa de Tecnologia que trabalha com gestão de riscos e compliance.
 
-Capacidade de propor soluções de ponta e trazer visão estratégica para o uso de IA na empresa.
 
-Quais serão os seus desafios?
+Nosso cliente é uma empresa de tecnologia que trabalha com gestão de riscos e compliance.
+Estamos em busca de um(a) Desenvolvedor(a) Backend Sênior com mentalidade investigativa, foco em automação e paixão por dados.
 
-Estruturar e treinar modelos de IA para automação de tarefas repetitivas.
-Garantir integração de IA com sistemas jurídicos.
-Sustentação a projetos de inovação e demandas corporativas.
-Análise de requisitos e desenvolvimento de soluções técnicas eficientes, atuando diretamente na manutenção de sistemas e aplicações da empresa.
 
-Atuar na análise de necessidades propondo soluções de automações sistêmicas com IA garantindo governança, qualidade, rastreabilidade e disponibilidade dos dados.
+Você vai atuar em uma operação que integra milhares de fontes públicas e privadas, desenvolvendo soluções de IA e automação inteligente para garantir a performance, estabilidade e disponibilidade dos dados que alimentam os produtos.
 
-Apoiar a evolução da plataforma de dados, definindo boas práticas, padrões e automações.
 
-Identificar oportunidades de melhoria contínua, propondo soluções escaláveis e eficientes para desafios complexos de dados.
+Se você é um(a) dev que enxerga código como ferramenta para otimizar o mundo real, adora resolver gargalos complexos e transformar tarefas de dias em minutos, vem com a gente.
 
-Desenvolver scripts ou manipulação de dados para melhoria sistêmica e/ou segurança dos dados.
 
-Sustentação e manutenção de softwares de ERP e HCM, incluindo customizações e suporte a usuários finais.
+O que você vai fazer
+
+Mapear e priorizar quais fontes geram mais problemas e desenvolver soluções definitivas.
+Identificar padrões de falhas, instabilidades, lentidões, indisponibilidades e inconformidades e desenvolver soluções definitivas.
+Criar e evoluir pipelines de dados, rotinas de coleta, scraping, crawlers ou conectores já existentes.
+Desenvolver correções, melhorias e automações para garantir maior disponibilidade e confiabilidade das fontes.
+Mapear e documentar todo o fluxo de cada fonte de dados (origem, coleta, processamento, consumo, etc).
+Desenvolver Agentes de Inteligência Artificial capazes de monitorar fontes de dados e APIs e antecipar falhas, criar análises, relatórios e insights de forma autônoma, automatizar processos repetitivos do time, suportar atendimento, investigação e tomada de decisão.
+Atuar em conjunto com times internos para validação de soluções.
+Garantir a integridade, consistência e qualidade dos dados entregues.
+
+
+Requisitos
+
+O que esperamos de você
+
+Experiência sólida em desenvolvimento backend PHP/Laravel com foco em dados e automação.
+Domínio em scraping, proxies, CAPTCHAs e APIs RESTful.
+Experiência com bancos relacionais e não relacionais.
+Vivência com n8n, agentes de IA e monitoramento automatizado.
+Perfil mão na massa, proativo e analítico.
+Desejável
+
+Experiência em empresas de grande volume de dados.
+Capacidade de analisar causas raiz e propor soluções estruturais.
+Interesse em IA aplicada à automação operacional e agentes autônomos.
 
 """
 
 schema = """
 {
   "name": "Nome completo do candidato",
-  "area": "Área ou setor principal que o candidato atua. Classifique em apenas uma: Desenvolvimento, Marketing, Vendas, Financeiro, Administrativo, Outros",
+  "position": "Posição do candidato",
   "summary": "Resumo objetivo sobre o perfil profissional do candidato",
   "hard_skills": ["competência 1", "competência 2", "..."],
   "soft_skills": ["competência 1", "competência 2", "..."],
@@ -77,7 +97,7 @@ schema = """
 
 fields = [
     "name",
-    "area",
+    "position",
     "summary",
     "hard_skills",
     "soft_skills",
@@ -156,7 +176,9 @@ if "rewrite_options" not in st.session_state:
     "style": "professional",  # professional, modern, concise
     "highlight_missing": True,
     "emphasize_strengths": True,
-    "template": "1"  # 1 ou 2
+    "template": "1",  # 1 ou 2
+    "primary_color": "#2563eb",  # Cor predominante em hex (azul padrão)
+    "idioma": "Português Brasileiro"  # Idioma do currículo
   }
 
 if "cv_templates" not in st.session_state:
@@ -243,6 +265,27 @@ st.session_state.rewrite_options["highlight_missing"] = st.sidebar.checkbox(
 st.session_state.rewrite_options["emphasize_strengths"] = st.sidebar.checkbox(
   "Enfatizar pontos fortes",
   value=True
+)
+
+st.session_state.rewrite_options["primary_color"] = st.sidebar.color_picker(
+  "🎨 Cor Predominante",
+  value=st.session_state.rewrite_options.get("primary_color", "#2563eb"),
+  help="Escolha a cor predominante para o cabeçalho e seções do PDF"
+)
+
+st.session_state.rewrite_options["idioma"] = st.sidebar.selectbox(
+  "🌐 Idioma do CV",
+  [
+    "Português Brasileiro",
+    "Português Europeu",
+    "English",
+    "Español",
+    "Français",
+    "Deutsch",
+    "Italiano"
+  ],
+  index=0,
+  help="Selecione o idioma em que o currículo será reformulado"
 )
 
 col1, col2 = st.columns(2)
@@ -403,7 +446,8 @@ if has_analysis and has_cv_content:
               st.session_state.cv_analysis,
               job_details,
               cv_template=cv_template,
-              rewrite_options=st.session_state.rewrite_options
+              rewrite_options=st.session_state.rewrite_options,
+              idioma=st.session_state.rewrite_options.get("idioma", "Português Brasileiro")
             )
           
           # Valida o resultado
@@ -463,11 +507,12 @@ if has_analysis and has_cv_content:
         st.markdown(st.session_state.rewritten_cv)
     
     # Downloads do currículo reformulado
-    col_download_md_main, col_download_pdf_main = st.columns(2)
+    st.markdown("### 📥 Downloads")
+    col_download_md_main, col_download_pdf_main, col_download_docx_main = st.columns([1, 1, 1], gap="large")
     
     with col_download_md_main:
       st.download_button(
-        label="📄 Baixar Markdown (.md)",
+        label="📄 Markdown (.md)",
         data=st.session_state.rewritten_cv,
         file_name="curriculo_reformulado.md",
         mime="text/markdown",
@@ -477,14 +522,33 @@ if has_analysis and has_cv_content:
     
     with col_download_pdf_main:
       # Gera PDF
-      pdf_bytes = generate_pdf_from_cv(st.session_state.rewritten_cv)
+      pdf_bytes = generate_pdf_from_cv(
+        st.session_state.rewritten_cv,
+        primary_color=st.session_state.rewrite_options.get("primary_color", "#2563eb")
+      )
       if pdf_bytes:
         st.download_button(
-          label="📕 Baixar PDF (.pdf)",
+          label="📕 PDF (.pdf)",
           data=pdf_bytes,
           file_name="curriculo_reformulado.pdf",
           mime="application/pdf",
           key="download_rewritten_cv_pdf",
+          use_container_width=True
+        )
+    
+    with col_download_docx_main:
+      # Gera DOCX
+      docx_bytes = generate_docx_from_cv(
+        st.session_state.rewritten_cv,
+        primary_color=st.session_state.rewrite_options.get("primary_color", "#2563eb")
+      )
+      if docx_bytes:
+        st.download_button(
+          label="📘 Word (.docx)",
+          data=docx_bytes,
+          file_name="curriculo_reformulado.docx",
+          mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          key="download_rewritten_cv_docx",
           use_container_width=True
         )
 elif st.session_state.cv_analysis and not st.session_state.original_cv_content:
@@ -548,7 +612,8 @@ if os.path.exists(json_file):
                   analysis,
                   job_details,
                   cv_template=cv_template,
-                  rewrite_options=st.session_state.rewrite_options
+                  rewrite_options=st.session_state.rewrite_options,
+                  idioma=st.session_state.rewrite_options.get("idioma", "Português Brasileiro")
                 )
               
               if rewritten and isinstance(rewritten, str) and len(rewritten.strip()) > 50:
@@ -570,7 +635,7 @@ if os.path.exists(json_file):
       with cols[5]:
         # Mostra botões de download se o CV foi reformulado
         if candidate_name in st.session_state.rewritten_cvs:
-          col_md, col_pdf = st.columns(2)
+          col_md, col_pdf, col_docx = st.columns([1, 1, 1], gap="medium")
           with col_md:
             st.download_button(
               label="📄 MD",
@@ -582,7 +647,10 @@ if os.path.exists(json_file):
             )
           with col_pdf:
             # Gera PDF
-            pdf_bytes = generate_pdf_from_cv(st.session_state.rewritten_cvs[candidate_name])
+            pdf_bytes = generate_pdf_from_cv(
+              st.session_state.rewritten_cvs[candidate_name],
+              primary_color=st.session_state.rewrite_options.get("primary_color", "#2563eb")
+            )
             if pdf_bytes:
               st.download_button(
                 label="📕 PDF",
@@ -590,6 +658,21 @@ if os.path.exists(json_file):
                 file_name=f"curriculo_reformulado_{candidate_name.replace(' ', '_')}.pdf",
                 mime="application/pdf",
                 key=f"download_pdf_{i}",
+                use_container_width=True
+              )
+          with col_docx:
+            # Gera DOCX
+            docx_bytes = generate_docx_from_cv(
+              st.session_state.rewritten_cvs[candidate_name],
+              primary_color=st.session_state.rewrite_options.get("primary_color", "#2563eb")
+            )
+            if docx_bytes:
+              st.download_button(
+                label="📘 DOCX",
+                data=docx_bytes,
+                file_name=f"curriculo_reformulado_{candidate_name.replace(' ', '_')}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                key=f"download_docx_{i}",
                 use_container_width=True
               )
       
@@ -624,11 +707,12 @@ if st.session_state.selected_cv:
         st.markdown(st.session_state.rewritten_cvs[selected_name])
     
     # Downloads
-    col_download_md, col_download_pdf = st.columns(2)
+    st.markdown("### 📥 Downloads")
+    col_download_md, col_download_pdf, col_download_docx = st.columns([1, 1, 1], gap="large")
     
     with col_download_md:
       st.download_button(
-        label=f"📄 Baixar Markdown (.md)",
+        label="📄 Markdown (.md)",
         data=st.session_state.rewritten_cvs[selected_name],
         file_name=f"curriculo_reformulado_{selected_name.replace(' ', '_')}.md",
         mime="text/markdown",
@@ -638,14 +722,33 @@ if st.session_state.selected_cv:
     
     with col_download_pdf:
       # Gera PDF
-      pdf_bytes = generate_pdf_from_cv(st.session_state.rewritten_cvs[selected_name])
+      pdf_bytes = generate_pdf_from_cv(
+        st.session_state.rewritten_cvs[selected_name],
+        primary_color=st.session_state.rewrite_options.get("primary_color", "#2563eb")
+      )
       if pdf_bytes:
         st.download_button(
-          label=f"📕 Baixar PDF (.pdf)",
+          label="📕 PDF (.pdf)",
           data=pdf_bytes,
           file_name=f"curriculo_reformulado_{selected_name.replace(' ', '_')}.pdf",
           mime="application/pdf",
           key="download_selected_rewritten_pdf",
+          use_container_width=True
+        )
+    
+    with col_download_docx:
+      # Gera DOCX
+      docx_bytes = generate_docx_from_cv(
+        st.session_state.rewritten_cvs[selected_name],
+        primary_color=st.session_state.rewrite_options.get("primary_color", "#2563eb")
+      )
+      if docx_bytes:
+        st.download_button(
+          label="📘 Word (.docx)",
+          data=docx_bytes,
+          file_name=f"curriculo_reformulado_{selected_name.replace(' ', '_')}.docx",
+          mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          key="download_selected_rewritten_docx",
           use_container_width=True
         )
 
