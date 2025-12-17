@@ -8,75 +8,84 @@
 
 
 **Resumo Profissional**  
-Engenheiro de Dados Sênior com mais de 15 anos de experiência em arquitetura, modelagem e integração de dados em ambientes complexos, incluindo projetos de automação com IA e BI. Expertise em construir pipelines escaláveis, aplicar práticas de CI/CD, além de liderar iniciativas de inovação tecnológica com foco em governança, qualidade e performance de dados. Capacidade comprovada de propor soluções estratégicas que otimizam processos e suportam decisões baseadas em dados.
+[SUMMARY]
 
----
 
 **Experiências**
 
-- **Arquiteto de Dados na Secretaria da Fazenda** (2022-2024)  
-  - *Desenvolvi e implementei uma plataforma de Data Lake e Lakehouse, integrando múltiplas fontes de dados (ERP, APIs, bancos relacionais e não relacionais), garantindo alta performance e governança.*  
-  - *Liderei a automação de processos de ETL usando Airflow e Spark, reduzindo o tempo de processamento em 40%, e implementei pipelines de dados escaláveis com versionamento e testes automatizados.*  
-  - *Coordenei a preparação de dados para modelos de Machine Learning, incluindo feature store e monitoramento de modelos em produção, apoiando iniciativas de automação inteligente.*
+- **[POSITION]**
+    _[COMPANY]_ - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  
+- **[POSITION]**
+    _[COMPANY]_ - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
 
-- **Engenheiro de Dados na Gold Energy Portugal** (2023-2024)  
-  - *Construí soluções de Data Warehouse na nuvem (Azure e AWS), otimizando consultas SQL Server e frameworks de processamento como Databricks.*  
-  - *Desenvolvi integrações de dados de fontes diversas, automatizando cargas e validações, garantindo dados confiáveis para análises estratégicas.*  
-  - *Participei de projetos de automação de processos com RPA, integrando IA generativa para otimizar tarefas repetitivas.*
+- **[POSITION]**
+    _[COMPANY]_ - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
 
-- **Tech Leader na Pixeon – Saúde** (2015-2020)  
-  - *Liderei a implementação de pipelines de dados para dashboards de BI, utilizando Power BI e Tableau, com foco em métricas automatizadas e KPIs estratégicos.*  
-  - *Desenvolvi soluções de automação de relatórios e análises preditivas, apoiando decisões clínicas e administrativas.*  
-  - *Contribuí para a definição de melhores práticas de governança de dados e padronização de métricas corporativas.*
-
----
+- **[POSITION]**
+    _[COMPANY]_ - (START - END)
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
 
 **Formação Acadêmica**  
-- Bacharelado em SI - Devry (2023)
-- Especialização em Big Data e Inteligência Artificial – Faculdade Líbano (2024)  
-- Especialização em Cyber Segurança – IGTI (2020)  
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
 
----
 
 **Certificações**
-- Certificação Azure Data Engineer (2023)  
-- Certificação AWS Certified Data Analytics – Specialty (2022)  
-- Certificação Power BI e Tableau (2021)  
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
+- [TITULO] ([ANO])
 
 
 **Cursos**
-- Curso de Power BI na Meta, 10h
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
+- [CURSO] - [INSTITUIÇÃO] ([ANO])
 
 **Projetos e Consultorias Relevantes**  
-
-- **Automação de Processos com IA e Data Lake**  
-  - *Implementação de pipelines de dados automatizados para integração de sistemas jurídicos, usando Spark, Airflow e AWS, resultando em redução de tarefas manuais em 50%.*  
-  - *Desenvolvi modelos de IA para automação de tarefas repetitivas, treinando modelos em ambientes cloud, aumentando a eficiência operacional.*  
-
-- **Plataforma de BI Estratégico para Gestão Empresarial**  
-  - *Construção de um Data Lake com governança de dados, integrando fontes ERP e CRM, suportando dashboards preditivos com Power BI.*  
-  - *Padronizei métricas e KPIs estratégicos, facilitando a tomada de decisão em tempo real e reduzindo erros de interpretação.*  
-
-- **Projeto de Integração de Dados para Automação de Tarefas Jurídicas**  
-  - *Desenvolvi integrações entre sistemas jurídicos e plataformas internas, usando APIs e pipelines ETL, garantindo alta disponibilidade e rastreabilidade.*  
-  - *Apliquei automações com IA generativa para geração de relatórios e análises, melhorando a produtividade da equipe jurídica.*  
-
----
-
+- **[PROJETO]**
+  _[EMPRESA]_ - (START-END)
+    - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+    - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+    - *[CONTEXT] + [ACTION] + [TECHNICAL_CONTEXT] + [RESULTS]*  
+  
 **Hard Skills**  
-- Modelagem, arquitetura e integração de dados (Data Lake, Lakehouse, Data Warehouse)  
-- Python, SQL, Spark, Databricks, Airflow, CI/CD  
-- Cloud Computing (AWS, Azure, GCP)  
-- Automação de processos e RPA (UiPath, Open RPA, N8N)  
-- Machine Learning e IA Generativa (ChatGPT, modelos de automação inteligente)  
-- SQL Server, tuning e performance  
-- Power BI, Tableau, governança de dados  
-- Desenvolvimento de pipelines escaláveis e de alto desempenho  
-
----
+- Desenvolvimento: [SKILL1, SKILL2,...]
+- Nuvem: [SKILL1, SKILL2,...]
+- Banco de Dados: [SKILL1, SKILL2,...]
+- IA: [SKILL1, SKILL2,...]
+- Outras Ferramentas: [SKILL1, SKILL2,...] 
 
 **Soft Skills**  
-- Visão estratégica e inovação tecnológica  
-- Proatividade na resolução de problemas complexos  
-- Comunicação clara e colaboração com equipes multidisciplinares  
-- Foco em governança, qualidade e rastreabilidade de dados  
+- [SKILL1]
+- [SKILL2]
+- [SKILL3]
+- [SKILL4]
+- [SKILL5]

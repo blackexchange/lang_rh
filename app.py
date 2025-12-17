@@ -51,12 +51,20 @@ Sustentação e manutenção de softwares de ERP e HCM, incluindo customizaçõe
 schema = """
 {
   "name": "Nome completo do candidato",
-
   "area": "Área ou setor principal que o candidato atua. Classifique em apenas uma: Desenvolvimento, Marketing, Vendas, Financeiro, Administrativo, Outros",
   "summary": "Resumo objetivo sobre o perfil profissional do candidato",
   "hard_skills": ["competência 1", "competência 2", "..."],
   "soft_skills": ["competência 1", "competência 2", "..."],
-  "education": "Resumo da formação acadêmica mais relevante",
+  "academic_info": [{
+    "title": "Título do curso",
+    "institution": "Instituição",
+    "year": "Ano"
+  },{...}],
+  "training_courses": [{
+    "title": "Título do curso",
+    "institution": "Instituição"
+  }, "..."],
+  "experiences": [{"position": "Posição", "company": "Empresa", "start_date": "Data de início", "end_date": "Data de fim", "description": "Descrição da experiência"}, {...}],
   "certifications": ["certificação 1", "certificação 2", "..."],
   "interview_questions": ["Pelo menos 3 perguntas úteis para entrevista com base no currículo, para esclarecer algum ponto ou explorar melhor"],
   "strengths": ["Pontos fortes e aspectos que indicam alinhamento com o perfil ou vaga desejada"],
@@ -73,7 +81,9 @@ fields = [
     "summary",
     "hard_skills",
     "soft_skills",
-    "education",
+    "academic_info",
+    "training_courses",
+    "experiences",
     "certifications",
     "interview_questions",
     "strengths",
@@ -95,6 +105,7 @@ Critérios de avaliação:
 4. Educação (Peso: 15% do total): Avalie a relevância da graduação/certificações para o cargo, incluindo instituições e anos de estudo.
 5. Pontos Fortes (Peso: 15% do total): Avalie a relevância dos pontos fortes (ou alinhamentos) para a vaga.
 6. Pontos Fracos (Desconto de até 10%): Avalie a gravidade dos pontos fracos (ou desalinhamentos) para a vaga.
+7. Cursos (Peso: 5% do total): Avalie a relevância dos cursos para a vaga.
 """
 
 prompt_template = ChatPromptTemplate.from_template("""

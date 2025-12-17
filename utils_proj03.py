@@ -176,24 +176,24 @@ def generate_cv_content_from_json(cv_data):
     ## Resumo Profissional
     {cv_data.get('summary', '')}
 
+    ## Experiências
+    {cv_data.get('experiences', '')}
+
+    ## Formação Acadêmica
+    {cv_data.get('academic_info', '')}
+
+    ## Certificações
+    {cv_data.get('certifications', '')}
+
+    ## Cursos
+    {cv_data.get('training_courses', '')}
+    
     ## Hard Skills
     {cv_data.get('hard_skills', '')}
 
     ## Soft Skills
     {cv_data.get('soft_skills', '')}
 
-    ## Formação Acadêmica
-    {cv_data.get('education', '')}
-
-    ## Certificações
-    {cv_data.get('certifications', '')}
-
-    ## Cursos
-    {cv_data.get('courses', '')}
-
-    ## Experiências
-    {cv_data.get('experiences', '')}
-   
     """
     return content
 
@@ -398,30 +398,39 @@ def create_rewrite_prompt_template():
     """Cria o template de prompt para o agente reformulador"""
     return ChatPromptTemplate.from_template("""
     Você é um especialista em redação de currículos profissionais.
-    Sua tarefa é criar um currículo reformulado usando o TEMPLATE fornecido como base estrutural, preenchendo as seções com informações baseadas na análise e no currículo original.
+    Atue como um Headhunter Especialista em Tecnologia e Otimização de Currículos para ATS. Você é expert em adequar perfis seniores (Arquitetos, Tech Leads, Engenheiros de Dados, Especialistas em IA Generativa) para vagas competitivas.
+
+    Sua tarefa é Reescrever pontos estratégicos do currículo abaixo usando o TEMPLATE fornecido como base estrutural, para maximizar a aderência (match) com a descrição da vaga fornecida, baseadas na *análise* e no currículo original.. Pode inventar dados, alterar a semântica e a ênfase para espelhar a linguagem da empresa.
+
 
     INSTRUÇÕES IMPORTANTES:
     1. Use o TEMPLATE fornecido como estrutura base - mantenha a mesma formatação, seções e estilo
     2. Preencha as seções do template com informações baseadas na análise e no currículo original
     3. Você PODE e DEVE criar/inventar conteúdo relevante para as seções, desde que seja coerente com:
     - As habilidades e experiências do candidato
-    - Os pontos fortes identificados na análise
+    - Os pontos fortes e fracos identificados na análise
     - Os requisitos da vaga
     - As recomendações da análise
+    - As habilidades faltantes identificadas na análise
+    - As habilidades subutilizadas identificadas na análise
     4. Seções a preencher:
-    - **Resumo Profissional**: Crie um resumo que destaque os pontos fortes e alinhamento com a vaga
-    - **Experiências**: Mantenha o mesmo nome das empresas, porem, adeque o nome da posição ao da vaga, crie descrições de experiências profissionais relevantes, destacando conquistas e habilidades
-    - **Projetos e Consultorias Relevantes**: Crie projetos, com empresa e data fictícios que demonstrem as habilidades necessárias para a vaga
-    - **Hard Skills**: Liste habilidades técnicas relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
-    - **Soft Skills**: Liste habilidades comportamentais relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
-    - **Certificações**: Liste certificações relevantes, priorizando as mencionadas na vaga
-    - **Cursos**: Liste cursos relevantes, priorizando os mencionados na vaga
+    - **Resumo Profissional**:  Crie um novo "Resumo" de 3 a 4 linhas conectando a senioridade do candidato à dor principal da vaga.
+    - **Experiências**: Não invente o nome das empresas nem a data de início e fim das experiências. Adeque o nome da posição/cargo ao da vaga
+        - Adeque cada experiência profissional do currículo, para ficarem aderente aos requisitos da vaga.
+        - Para cada uma, melhore, crie 2 casos mais relevantes, contextualizados com a respectiva área.
+        - Reescreva 3 pontos para cada uma, focados no Modelo STAR: "Contexto + Verbo de Ação + Contexto Técnico + Resultado".
+    - **Projetos e Consultorias Relevantes**: Crie 2 a 4 projetos, contendo nome de empresa e data fictícios que demonstrem as habilidades necessárias para a vaga
+    - **Hard Skills**: Liste de 4 a 6 habilidades técnicas relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
+    - **Soft Skills**: Liste de 4 a 6 habilidades comportamentais relevantes, priorizando as mencionadas na vaga, crie novas habilidades que sejam relevantes para a vaga
+    - **Certificações**: Liste de 4 a 6 certificações do curriculum que estejam alinhadas direta ou indiretamente com a vaga. não invente certificações
+    - **Cursos e Treinamentos**: Liste de 4 a 6  cursos e treinamentos do curriculum relevantes, não invente cursos e treinamentos.
     5. Use linguagem {style}
     6. Mantenha a estrutura e formatação exata do template
     7. {focus_instruction}
     8. {highlight_instruction}
     9. {strengths_instruction}
     10. Seja criativo mas realista - crie conteúdo que faça sentido para o perfil do candidato
+    11. Traduza para o idioma {idioma}
 
     TEMPLATE DE CV (use esta estrutura):
     '{cv_template}'
@@ -438,10 +447,13 @@ def create_rewrite_prompt_template():
     Crie um currículo completo preenchendo o template com informações relevantes baseadas na análise e no currículo original.
     Mantenha a estrutura exata do template, apenas preenchendo as seções com conteúdo novo e relevante.
     Retorne o currículo completo no mesmo formato do template.
+    
+    **Omita quaisquer observações ou comentários.**
+    **Não invente o nome das empresas nem a data de início e fim das experiências.**
     """)
 
 
-def rewrite_cv(llm, original_cv_content, analysis, job_details, cv_template=None, rewrite_options=None):
+def rewrite_cv(llm, original_cv_content, analysis, job_details, cv_template=None, rewrite_options=None, idioma="Português Brasileiro"):
     """
     Agente Reformulador: Reformula o currículo baseado na análise usando um template
     
@@ -452,7 +464,7 @@ def rewrite_cv(llm, original_cv_content, analysis, job_details, cv_template=None
         job_details: Detalhes da vaga
         cv_template: Template de CV para usar como estrutura base (opcional)
         rewrite_options: Dicionário com opções de reformulação (opcional)
-    
+        idioma: Idioma do currículo (opcional)
     Returns:
         str: Currículo reformulado em markdown
     """
@@ -540,7 +552,8 @@ def rewrite_cv(llm, original_cv_content, analysis, job_details, cv_template=None
             "style": style_text,
             "focus_instruction": focus_instruction,
             "highlight_instruction": highlight_instruction,
-            "strengths_instruction": strengths_instruction
+            "strengths_instruction": strengths_instruction,
+            "idioma": idioma
         })
         
         rewritten_cv = format_res(output.content)
